@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tracker Arbitre Elite 2 — Été 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --bg:       #080810;
+  --bg2:      #0f0f1a;
+  --bg3:      #141422;
+  --bg4:      #1a1a2e;
+  --border:   #1e1e35;
+  --gold:     #C9A84C;
+  --gold2:    #e8c96a;
+  --white:    #f0f0ff;
+  --grey:     #6a6a8a;
+  --grey2:    #3a3a5a;
+  --meca:     #6ab0ff;
+  --jug:      #b08aff;
+  --crew:     #7adf9a;
+  --scout:    #ff9a5a;
+  --pregame:  #f7d06a;
+  --muscu:    #ff7a7a;
+  --cardio:   #ffb347;
+  --regle:    #5de0d8;
+  --coaching: #C9A84C;
+  --stage:    #e0e05d;
+  --done:     #2a3a2a;
+  --done-border: #4a8a4a;
+  --done-text: #7adf7a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.app-header {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.app-title span { color: var(--gold); }
+.header-stats {
+  display: flex;
+  gap: 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+}
+.hstat { color: var(--grey); }
+.hstat b { color: var(--gold); }
+
+/* ── LAYOUT ── */
+.layout {
+  display: flex;
+  min-height: calc(100vh - 52px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 16px 0;
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+}
+.sidebar-section {
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+.sidebar-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--grey2);
+  padding: 8px 4px 4px;
+}
+.nav-item {
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: var(--grey);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all .15s;
+  margin-bottom: 2px;
+  border: 1px solid transparent;
+}
+.nav-item:hover { background: var(--bg3); color: var(--white); }
+.nav-item.active { background: var(--bg4); color: var(--white); border-color: var(--gold); }
+.nav-item .nav-week { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--gold); min-width: 28px; }
+.nav-item .nav-prog {
+  width: 100%;
+  height: 3px;
+  background: var(--bg4);
+  border-radius: 2px;
+  margin-top: 3px;
+  overflow: hidden;
+}
+.nav-item .nav-prog-fill {
+  height: 100%;
+  background: var(--done-text);
+  border-radius: 2px;
+  transition: width .3s;
+}
+.phase-divider {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 10px 10px 4px;
+  color: var(--grey2);
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
+}
+
+/* ── MAIN ── */
+.main {
+  flex: 1;
+  padding: 24px 20px;
+  overflow-y: auto;
+  max-width: 900px;
+}
+
+/* ── WEEK CARD ── */
+.week-card {
+  display: none;
+}
+.week-card.active { display: block; }
+
+.week-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.week-num {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 3.5rem;
+  color: var(--gold);
+  line-height: 1;
+  opacity: .25;
+  min-width: 80px;
+  text-align: right;
+}
+.week-info { flex: 1; }
+.week-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+.week-dates {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.week-desc {
+  font-size: 0.82rem;
+  color: var(--grey);
+  line-height: 1.55;
+}
+
+/* ── PROGRESS BAR ── */
+.week-progress {
+  background: var(--bg3);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.prog-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--grey);
+  min-width: 80px;
+}
+.prog-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg4);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--done-text), #a0ffa0);
+  border-radius: 3px;
+  transition: width .4s ease;
+}
+.prog-pct {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--done-text);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── ALERT ── */
+.alert-box {
+  border-left: 3px solid var(--cardio);
+  background: #1a1408;
+  padding: 8px 12px;
+  border-radius: 0 5px 5px 0;
+  font-size: 0.78rem;
+  color: var(--cardio);
+  margin-bottom: 14px;
+}
+.coaching-box {
+  border: 1px solid var(--gold);
+  background: #1a1208;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+.coaching-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--gold);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.coaching-body { font-size: 0.78rem; color: var(--grey); line-height: 1.5; }
+
+/* ── SÉANCES GRID ── */
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--grey2);
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+.seances-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+/* ── SÉANCE CARD ── */
+.seance {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.seance:hover { border-color: var(--grey2); transform: translateY(-1px); }
+.seance.done {
+  background: var(--done);
+  border-color: var(--done-border);
+}
+.seance.done::after {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 1rem;
+  color: var(--done-text);
+  font-weight: bold;
+}
+.seance-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.seance-jour {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--grey);
+  background: var(--bg3);
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 1px;
+}
+.seance-type {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.seance-title {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--white);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.seance.done .seance-title { color: var(--done-text); }
+.seance-corps {
+  font-size: 0.72rem;
+  color: var(--grey);
+  line-height: 1.45;
+}
+.seance-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+}
+.btn-done {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all .15s;
+  letter-spacing: .5px;
+}
+.btn-done.not-done {
+  background: transparent;
+  border-color: var(--grey2);
+  color: var(--grey);
+}
+.btn-done.not-done:hover { border-color: var(--done-text); color: var(--done-text); }
+.btn-done.is-done {
+  background: var(--done);
+  border-color: var(--done-border);
+  color: var(--done-text);
+}
+.btn-comment {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--grey2);
+  background: transparent;
+  color: var(--grey);
+  transition: all .15s;
+  letter-spacing: .5px;
+}
+.btn-comment:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── COMMENT AREA ── */
+.comment-area {
+  display: none;
+  margin-top: 8px;
+}
+.comment-area.open { display: block; }
+.comment-area textarea {
+  width: 100%;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  padding: 8px;
+  resize: vertical;
+  min-height: 60px;
+  outline: none;
+  transition: border-color .15s;
+}
+.comment-area textarea:focus { border-color: var(--gold); }
+.comment-area .save-btn {
+  margin-top: 5px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  transition: all .15s;
+}
+.comment-area .save-btn:hover { background: var(--gold); color: var(--bg); }
+.comment-display {
+  margin-top: 6px;
+  font-size: 0.72rem;
+  color: var(--gold2);
+  font-style: italic;
+  background: #1a1208;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border-left: 2px solid var(--gold);
+  white-space: pre-wrap;
+  display: none;
+}
+.comment-display.has-comment { display: block; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,.8);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 480px;
+  width: 92%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-type { font-family: 'DM Mono', monospace; font-size: 0.65rem; }
+.modal-title { font-family: 'Syne', sans-serif; font-size: 1rem; color: var(--white); }
+.modal-jour { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--grey); }
+.modal-body { font-size: 0.82rem; color: var(--grey); line-height: 1.65; margin-bottom: 16px; }
+.modal-body b { color: var(--white); }
+.modal-section { margin-bottom: 14px; }
+.modal-section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--grey2);
+  margin-bottom: 6px;
+}
+.modal-textarea {
+  width: 100%;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  padding: 10px;
+  resize: vertical;
+  min-height: 70px;
+  outline: none;
+  transition: border-color .15s;
+}
+.modal-textarea:focus { border-color: var(--gold); }
+.modal-footer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.modal-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all .15s;
+  letter-spacing: .5px;
+}
+.modal-btn.primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+}
+.modal-btn.primary:hover { background: var(--gold2); }
+.modal-btn.secondary {
+  background: transparent;
+  border-color: var(--grey2);
+  color: var(--grey);
+}
+.modal-btn.secondary:hover { border-color: var(--white); color: var(--white); }
+.modal-btn.danger {
+  background: transparent;
+  border-color: #5a2020;
+  color: #ff7a7a;
+}
+.modal-btn.danger:hover { background: #2a1010; }
+.modal-close-x {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--grey);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.modal-close-x:hover { color: var(--white); }
+
+/* ── NOTE GLOBALE SEMAINE ── */
+.week-note-section {
+  margin-top: 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.week-note-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.week-note-textarea {
+  width: 100%;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  padding: 10px;
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  transition: border-color .15s;
+}
+.week-note-textarea:focus { border-color: var(--gold); }
+.week-note-save {
+  margin-top: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  transition: all .15s;
+}
+.week-note-save:hover { background: var(--gold); color: var(--bg); }
+.saved-note {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: var(--grey);
+  font-style: italic;
+  white-space: pre-wrap;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--grey2); border-radius: 3px; }
+
+/* ── TYPE COLORS ── */
+.t-meca    { background: #122030; color: var(--meca); border-color: #1e3a5f; }
+.t-jug     { background: #18122a; color: var(--jug); border-color: #301d50; }
+.t-crew    { background: #121e14; color: var(--crew); border-color: #183a20; }
+.t-scout   { background: #1e1210; color: var(--scout); border-color: #3a1e10; }
+.t-pregame { background: #201a08; color: var(--pregame); border-color: #503a10; }
+.t-muscu   { background: #201210; color: var(--muscu); border-color: #481510; }
+.t-cardio  { background: #201808; color: var(--cardio); border-color: #483008; }
+.t-regle   { background: #0e1c1c; color: var(--regle); border-color: #123838; }
+.t-coaching{ background: #1a1005; color: var(--coaching); border-color: #3a2a05; }
+.t-stage   { background: #181808; color: var(--stage); border-color: #383808; }
+.t-repos   { background: #0a0a0d; color: var(--grey2); border-color: #111118; }
+
+/* ── SYNC BAR ── */
+.sync-bar {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+}
+.sync-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--grey2);
+  margin-right: 4px;
+}
+.sync-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  padding: 5px 13px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all .15s;
+  letter-spacing: .5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sync-btn.export-btn {
+  background: transparent;
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.sync-btn.export-btn:hover { background: var(--gold); color: var(--bg); }
+.sync-btn.import-btn {
+  background: transparent;
+  border-color: var(--grey2);
+  color: var(--grey);
+}
+.sync-btn.import-btn:hover { border-color: var(--white); color: var(--white); }
+.sync-btn.reset-btn {
+  background: transparent;
+  border-color: #3a1515;
+  color: #ff7a7a;
+}
+.sync-btn.reset-btn:hover { background: #2a1010; }
+.sync-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--done-text);
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.sync-status.show { opacity: 1; }
+.sync-info {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--grey2);
+  margin-left: auto;
+}
+/* Adjust main content to not be hidden by sync bar */
+.layout { padding-bottom: 46px; }
+#hiddenImport { display: none; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg3);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--white);
+  z-index: 300;
+  opacity: 0;
+  transition: all .3s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-title">Tracker <span>Arbitre Elite 2</span></div>
+  <div class="header-stats">
+    <div class="hstat">Séances : <b id="hTotal">0</b></div>
+    <div class="hstat">Faites : <b id="hDone">0</b></div>
+    <div class="hstat">Progression : <b id="hPct">0%</b></div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="main" id="main"></main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-type" id="mType"></div>
+        <div class="modal-title" id="mTitle"></div>
+        <div class="modal-jour" id="mJour"></div>
+      </div>
+      <button class="modal-close-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="mBody"></div>
+    <div class="modal-section">
+      <div class="modal-section-label">Ce que j'ai réellement fait</div>
+      <textarea class="modal-textarea" id="mRealise" placeholder="Décris ce que tu as réellement fait, la durée, les difficultés..."></textarea>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Ressenti & commentaires</div>
+      <textarea class="modal-textarea" id="mComment" placeholder="Points positifs, difficultés, ce que tu ferais différemment..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn primary" onclick="saveModal()">Sauvegarder</button>
+      <button class="modal-btn secondary" onclick="markDoneModal()">Marquer comme fait ✓</button>
+      <button class="modal-btn danger" onclick="resetModal()">Réinitialiser</button>
+      <button class="modal-btn secondary" onclick="closeModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DONNÉES ─────────────────────────────────────────────────────────────
+const WEEKS = [
+ {num:1,phase:'BLOC 1 — FONDATIONS',phaseColor:'#6ab0ff',dates:'9 – 15 juin',
+  desc:"Première semaine. Remise en route progressive. Bases 3PO et règlement Art. 1-10.",
+  alert:"Cardio très progressif — écoute du genou (syndrome essuie-glace).",
+  coaching:null,
+  seances:[
+   {id:'w1-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'Musculation — PULL',corps:'Séance dos/biceps à ta convenance.'},
+   {id:'w1-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:'Selon ressenti du genou.'},
+   {id:'w1-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'Musculation — PUSH',corps:'Séance pecs/épaules/triceps.'},
+   {id:'w1-phy-jeu',jour:'JEU',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:'Selon ressenti du genou.'},
+   {id:'w1-phy-ven',jour:'VEN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'Musculation — JAMBES',corps:'Attention genou.'},
+   {id:'w1-phy-sam',jour:'SAM',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:'Selon ressenti du genou.'},
+   {id:'w1-arb-lun',jour:'LUN',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Positions de base AT / AC / AK',corps:'Support : IOT_3PO_Basique Ch. 2.1-2.5\nLecture 30\' → vidéo avec pauses (45\') → noter 3 points-clés (15\').\nObjectif : nommer et placer les 3 arbitres sur un demi-terrain.'},
+   {id:'w1-arb-mar',jour:'MAR',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Art. 1 à 10 — Terrain, équipes, joueurs',corps:'Étude (45\') + 20 questions QCM (30\') + révision erreurs (15\').\nObjectif : 85%+.'},
+   {id:'w1-arb-mer',jour:'MER',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Patient call — Début → Développement → Fin',corps:'Support : Doc Principes_ + vidéos match.\nIdentifier 10 situations de sur-sifflet potentiel.'},
+   {id:'w1-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Triangle dynamique et côtés',corps:'Support : IOT_3PO_Basique Ch. 2.6-2.8\nDessiner le triangle à chaque arrêt vidéo.'},
+   {id:'w1-arb-ven',jour:'VEN',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Art. 11 à 20 — Temps de jeu, violations',corps:'Étude (45\') + 20 questions QCM (30\') + révision (15\').'},
+   {id:'w1-arb-sam',jour:'SAM',cat:'arbitrage',type:'VIDÉO CREW',tc:'t-crew',titre:'Briefing pre-game — Structure FIBA',corps:'Support : Pre_game.pdf + IOT_3PO_Basique\nLecture (30\') → séquences briefing (30\') → rédiger ton propre template (30\').'},
+  ]},
+ {num:2,phase:'BLOC 1 — FONDATIONS',phaseColor:'#6ab0ff',dates:'16 – 22 juin',
+  desc:"Approfondissement triangle 3PO. QCM Art. 21-30. Coaching #1.",
+  alert:null,
+  coaching:{date:'≈ Mardi 17 juin',titre:'Coaching #1 — Bilan S1 + Objectifs S3-S4',corps:'Bilan : positions 3PO acquises ? Patient call ? Score QCM Art. 1-20 ?\nObjectifs : points à travailler, vidéos à revoir, ajustement programme.'},
+  seances:[
+   {id:'w2-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'Musculation — PULL',corps:''},
+   {id:'w2-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w2-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'Musculation — PUSH',corps:''},
+   {id:'w2-phy-jeu',jour:'JEU',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w2-phy-ven',jour:'VEN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'Musculation — JAMBES',corps:''},
+   {id:'w2-phy-sam',jour:'SAM',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w2-arb-lun',jour:'LUN',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Rotations — situations déclenchantes',corps:'Support : IOT_3PO_Basique Ch. 2.8 + IOT_3PO_Avancé Ch. 2.1-2.4\nLister 5 situations qui déclenchent une rotation.'},
+   {id:'w2-coaching',jour:'MAR',cat:'arbitrage',type:'🎯 COACHING',tc:'t-coaching',titre:'Séance coaching #1 — 1h',corps:'Bilan S1. Points à consolider. Ajustement programme. Vidéo analysée ensemble.'},
+   {id:'w2-arb-mer',jour:'MER',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Situations 50/50 — F-DEF vs NOC',corps:'Support : Guide rapide Principes_\nAnalyser 15 situations 50/50. Règle d\'or : doute égal → F-DEF ou NOC.'},
+   {id:'w2-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO CREW',tc:'t-crew',titre:'Communication in-game — Assist partner',corps:'Support : IOT_3PO_Avancé Ch. 2.3 + Help_Defender.pdf\nQuand et comment intervenir ?'},
+   {id:'w2-arb-ven',jour:'VEN',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Art. 21 à 30 — Contact, positions de jeu',corps:'Étude (45\') + 20 questions QCM (30\') + révision (15\').'},
+   {id:'w2-arb-sam',jour:'SAM',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Zones de responsabilité primaires',corps:'Support : IOT_3PO_Avancé Ch. 2.7 + 2.15\nQui devait siffler ? Bonne zone ?'},
+  ]},
+ {num:3,phase:'BLOC 1 — FONDATIONS',phaseColor:'#6ab0ff',dates:'23 – 29 juin',
+  desc:"Consolidation rotations et zones. Art. 31-44. Gestion des conflits.",
+  alert:null,coaching:null,
+  seances:[
+   {id:'w3-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL',corps:''},
+   {id:'w3-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w3-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PUSH',corps:''},
+   {id:'w3-phy-jeu',jour:'JEU',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w3-phy-ven',jour:'VEN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'JAMBES',corps:''},
+   {id:'w3-phy-sam',jour:'SAM',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w3-arb-lun',jour:'LUN',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Lead changes avancés — post-up, écran',corps:'Support : IOT_3PO_Avancé Ch. 2.8-2.14\nFocus zone de responsabilité primaire.'},
+   {id:'w3-arb-mar',jour:'MAR',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Art. 31 à 44 — Fautes, sanctions, LF',corps:'Étude (45\') + 20 questions QCM (30\') + révision (15\').'},
+   {id:'w3-arb-mer',jour:'MER',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'AOS vs NAOS — les 4 cas de figure',corps:'Support : Principes_ + Interprétations 2025\nLes 4 cas AOS. Dans le doute = AOS.'},
+   {id:'w3-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Positions spéciales — LF, fin de QT',corps:'Support : IOT_3PO_Avancé Ch. 2.16-2.20\nProtocoles fins de QT. Fiche réflexes.'},
+   {id:'w3-arb-ven',jour:'VEN',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Révision Art. 1-44 — Test intermédiaire',corps:'20 questions mixtes. Objectif : 85%+.'},
+   {id:'w3-arb-sam',jour:'SAM',cat:'arbitrage',type:'VIDÉO CREW',tc:'t-crew',titre:'Gestion conflits — Entraîneur difficile',corps:'Support : Pre_game.pdf exercice 2\nScénarios "que faire si". Dialogue calme et ferme.'},
+  ]},
+ {num:4,phase:'BLOC 1 — FONDATIONS',phaseColor:'#6ab0ff',dates:'30 juin – 4 juillet',
+  desc:"Dernière semaine avant la Corse. Coaching #2. Préparer les docs offline.",
+  alert:"Départ en Corse le 5 juillet — préparer les documents de travail offline.",
+  coaching:{date:'≈ Mercredi 2 juillet',titre:'Coaching #2 — Bilan Bloc 1 + Objectifs Corse',corps:'Bilan : triangle 3PO, zones, briefing template. Score QCM global ?\nObjectifs juillet en Corse.'},
+  seances:[
+   {id:'w4-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL',corps:''},
+   {id:'w4-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w4-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PUSH',corps:''},
+   {id:'w4-phy-jeu',jour:'JEU',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w4-arb-lun',jour:'LUN',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Synthèse Bloc 1 — Révision complète 3PO',corps:'Auto-évaluation : AT/AC/AK + rotations + zones + protocoles spéciaux.'},
+   {id:'w4-arb-mar',jour:'MAR',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Interprétations 2024/2025 — Modifications',corps:'Focus surlignages jaunes. Étude (45\') + 15 questions (30\') + révision (15\').'},
+   {id:'w4-coaching',jour:'MER',cat:'arbitrage',type:'🎯 COACHING',tc:'t-coaching',titre:'Séance coaching #2 — 1h',corps:'Bilan Bloc 1 complet. Objectifs pour la Corse. Travail en autonomie juillet.'},
+   {id:'w4-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Bilan personnel — 5 situations améliorées',corps:'Comparer notes S1 vs S4. Lister 5 progrès. 3 points à garder en tête en Corse.'},
+  ]},
+ {num:5,phase:'🏝 CORSE — MAINTIEN',phaseColor:'#d4a843',dates:'5 – 13 juillet 🏝',
+  desc:"Arrivée en Corse. 1h30/jour maintenu. Physique poids de corps. Cardio adapté.",
+  alert:"Mode Corse : poids du corps uniquement. Cardio adapté : footing, natation, vélo.",
+  coaching:null,
+  seances:[
+   {id:'w5-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL — poids de corps',corps:''},
+   {id:'w5-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+   {id:'w5-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PUSH — poids de corps',corps:''},
+   {id:'w5-phy-jeu',jour:'JEU',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+   {id:'w5-phy-ven',jour:'VEN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'JAMBES — poids de corps',corps:''},
+   {id:'w5-phy-sam',jour:'SAM',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+   {id:'w5-arb-lun',jour:'LUN',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Rotations avancées — lead changes complexes',corps:'Support : IOT_3PO_Avancé Ch. 2.8-2.12\nSituations pick & roll, post-up.'},
+   {id:'w5-arb-mar',jour:'MAR',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Révision Art. 21-44 — Fautes complexes',corps:'20 questions. Objectif : 85%+.'},
+   {id:'w5-arb-mer',jour:'MER',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Verticalité et landing space',corps:'Support : Help_Defender.pdf\n15 situations charge/blocage.'},
+   {id:'w5-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO CREW',tc:'t-crew',titre:'Critères unifiés — cohérence du crew',corps:'Support : IOT_3PO_Avancé Ch. 2.18 + Debriefing.pdf'},
+   {id:'w5-arb-ven',jour:'VEN',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Interprétations 2025 — Cas spéciaux',corps:'20 questions. Objectif : 85%+.'},
+   {id:'w5-arb-sam',jour:'SAM',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Simulation match — arbitrage mental',corps:'Match complet : pauses sur chaque action.'},
+  ]},
+ {num:6,phase:'🏝 CORSE — MAINTIEN',phaseColor:'#d4a843',dates:'14 – 20 juillet 🏝',
+  desc:"Coaching distanciel #3. Interprétations et gestion d'après-match.",
+  alert:null,
+  coaching:{date:'≈ Lundi 14 juillet (Visio)',titre:'Coaching #3 — Bilan S5 (distanciel)',corps:'Rotations maîtrisées ? Score QCM ? Situations 50/50 : décisions ?\nObjectifs pour S7. Analyse vidéo à distance.'},
+  seances:[
+   {id:'w6-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL — poids de corps',corps:''},
+   {id:'w6-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+   {id:'w6-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PUSH — poids de corps',corps:''},
+   {id:'w6-phy-jeu',jour:'JEU',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+   {id:'w6-phy-ven',jour:'VEN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'JAMBES — poids de corps',corps:''},
+   {id:'w6-phy-sam',jour:'SAM',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+   {id:'w6-coaching',jour:'LUN',cat:'arbitrage',type:'🎯 COACHING',tc:'t-coaching',titre:'Séance coaching #3 — 1h (distanciel)',corps:'Bilan S5. Situations difficiles. Objectifs S7. Analyse vidéo à distance.'},
+   {id:'w6-arb-mar',jour:'MAR',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Test intermédiaire — 25 questions mixtes',corps:'Objectif : 85%+. Cible 20/25 confirmée pour le 10 août.'},
+   {id:'w6-arb-mer',jour:'MER',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Gestion fin de match — décision froide',corps:'Support : E_tat_d_esprit.pdf\n5 situations fin de match tendues. Tunnel de contrôle.'},
+   {id:'w6-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'AOS — Protocole complet',corps:'Support : IOT_3PO_Avancé + Protocole AOS\nLes 4 cas. Tir au buzzer : si doute → annuler.'},
+   {id:'w6-arb-ven',jour:'VEN',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Annexes — IRS, Feuille de marque, Réclamation',corps:'Support : Annexe F IRS + Mémo Réclamation DAHN\n15 questions sur procédures spéciales.'},
+   {id:'w6-arb-sam',jour:'SAM',cat:'arbitrage',type:'VIDÉO CREW',tc:'t-crew',titre:'Debriefing d\'après-match — Auto-évaluation',corps:'Support : Debriefing.pdf\n3 situations positives + 3 négatives. Scénario modifié.'},
+  ]},
+ {num:7,phase:'🏝 CORSE — MAINTIEN',phaseColor:'#d4a843',dates:'21 – 27 juillet 🏝',
+  desc:"Situations complexes et scouting préliminaire Elite 2.",
+  alert:null,coaching:null,
+  seances:[
+   {id:'w7-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL — poids de corps',corps:''},
+   {id:'w7-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+   {id:'w7-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PUSH — poids de corps',corps:''},
+   {id:'w7-phy-jeu',jour:'JEU',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+   {id:'w7-phy-ven',jour:'VEN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'JAMBES — poids de corps',corps:''},
+   {id:'w7-phy-sam',jour:'SAM',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+   {id:'w7-arb-lun',jour:'LUN',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Zones partagées — discipline et confiance',corps:'Support : IOT_3PO_Avancé Ch. 2.7\nZone rectangle 2 + zone restrictive.'},
+   {id:'w7-arb-mar',jour:'MAR',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Fake — Identification et gestion',corps:'Support : Principes_ (section FAKE)\n6 critères du fake.'},
+   {id:'w7-arb-mer',jour:'MER',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Révision ciblée — points fragiles',corps:'QCM personnalisé sur tes lacunes. → Dis-moi tes points faibles, je génère.'},
+   {id:'w7-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO CREW',tc:'t-crew',titre:'Pre-game conference — Simulation',corps:'Simuler un briefing complet. Utiliser ton template de S1.'},
+   {id:'w7-arb-ven',jour:'VEN',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Temps-morts et situations hors jeu',corps:'Support : IOT_3PO_Avancé Ch. 2.16\nPositions pendant les temps-morts.'},
+   {id:'w7-arb-sam',jour:'SAM',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Test blanc 20 questions',corps:'Sans notes, 20 min. Objectif : 16/20 à ce stade.'},
+  ]},
+ {num:8,phase:'🏝 CORSE — MAINTIEN',phaseColor:'#d4a843',dates:'28 – 30 juillet 🏝',
+  desc:"Derniers jours en Corse. Coaching #4 distanciel. Retour le 30 juillet.",
+  alert:"Retour de Corse le 30 juillet. Relance physique dès le 31 juillet.",
+  coaching:{date:'≈ Lundi 28 juillet (Visio)',titre:'Coaching #4 — Bilan juillet + Stratégie retour',corps:'Bilan S7. Score test blanc ?\nObjectifs août : Test blanc 20/25 ciblé pour le 10 août. Début scouting Elite 2.'},
+  seances:[
+   {id:'w8-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL — poids de corps',corps:'Dernière séance Corse.'},
+   {id:'w8-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio léger',corps:'Récupération active avant retour.'},
+   {id:'w8-coaching',jour:'LUN',cat:'arbitrage',type:'🎯 COACHING',tc:'t-coaching',titre:'Séance coaching #4 — 1h (distanciel)',corps:'Bilan juillet. Stratégie août. Test blanc objectif.'},
+   {id:'w8-arb-mar',jour:'MAR',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Bilan Corse — 5 progrès + 3 lacunes',corps:'Comparer notes S5 → S7. Lister améliorations et points à consolider en août.'},
+  ]},
+ {num:9,phase:'BLOC 2 — INTENSIF',phaseColor:'#b08aff',dates:'31 juillet – 3 août',
+  desc:"Retour de Corse. Remontée en charge physique. Interprétations 2025. Scouting Elite 2.",
+  alert:"Reprise progressive après 4 semaines en Corse. Charge +10-15%/sem max.",
+  coaching:null,
+  seances:[
+   {id:'w9-phy-jeu',jour:'JEU',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL — retour salle',corps:'Reprise progressive. Charge -15% vs pré-Corse.'},
+   {id:'w9-phy-ven',jour:'VEN',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio — reprise',corps:'Selon ressenti du genou.'},
+   {id:'w9-phy-sam',jour:'SAM',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PUSH — retour salle',corps:''},
+   {id:'w9-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Pick & Roll — couverture complète',corps:'Support : IOT_3PO_Avancé Ch. 2.8-2.10\nLe plus arbitré en Elite 2.'},
+   {id:'w9-arb-ven',jour:'VEN',cat:'arbitrage',type:'RÈGLEMENT QCM',tc:'t-regle',titre:'Interprétations 2025 — modifications juillet 2024',corps:'Étude ciblée des surlignages jaunes. 20 questions. Objectif : 85%+.'},
+   {id:'w9-arb-sam',jour:'SAM',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Charge vs blocage — 15 situations',corps:'Support : Help_Defender.pdf + Interprétations 2025\nLanding space. Position légale.'},
+  ]},
+ {num:10,phase:'BLOC 2 — INTENSIF',phaseColor:'#b08aff',dates:'4 – 10 août',
+  desc:"Semaine clé : coaching #5 + TEST BLANC QCM vendredi 8 août. Scouting Elite 2.",
+  alert:"🎯 OBJECTIF CRITIQUE : 20/25 au test blanc vendredi 8 août.",
+  coaching:{date:'≈ Lundi 4 août',titre:'Coaching #5 — Stratégie finale avant stage',corps:'Bilan complet été. Mécanique lacunes ? Stratégie stage : comment se présenter. Préparation mentale.'},
+  seances:[
+   {id:'w10-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL',corps:''},
+   {id:'w10-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w10-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PUSH',corps:''},
+   {id:'w10-phy-jeu',jour:'JEU',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+   {id:'w10-phy-ven',jour:'VEN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'JAMBES',corps:''},
+   {id:'w10-phy-sam',jour:'SAM',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio + Spécifique arbitre',corps:''},
+   {id:'w10-coaching',jour:'LUN',cat:'arbitrage',type:'🎯 COACHING',tc:'t-coaching',titre:'Séance coaching #5 — 1h',corps:'Bilan été. Stratégie stage 22-25 août. Objectifs personnels.'},
+   {id:'w10-arb-mar',jour:'MAR',cat:'arbitrage',type:'VIDÉO CREW',tc:'t-crew',titre:'Critères unifiés — simulation crew complet',corps:'Simuler un briefing + match entier avec critères alignés.'},
+   {id:'w10-arb-mer',jour:'MER',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'AOS + IRS — protocoles d\'urgence',corps:'Support : FIBA_IRS_Manual + Protocole AOS\nProtocoles qui peuvent surprendre en Elite 2.'},
+   {id:'w10-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Simulation match complet — arbitrage actif',corps:'Match Elite/Pro B : annoter chaque action. 5 bonnes + 5 à améliorer.'},
+   {id:'w10-arb-ven',jour:'VEN',cat:'arbitrage',type:'TEST BLANC QCM',tc:'t-regle',titre:'TEST BLANC — 25 questions (≈ vendredi 8 août)',corps:'CONDITIONS RÉELLES : sans notes, chrono 30\'.\nOBJECTIF : 20/25 (80%).\n→ Demande le test blanc quand tu es prêt !'},
+   {id:'w10-arb-sam',jour:'SAM',cat:'arbitrage',type:'SCOUTING',tc:'t-scout',titre:'Scouting Elite 2 — 3 premières équipes',corps:'Fiche par équipe : style de jeu, joueurs clés, situations à risque arbitral, coach.\n→ Donne-moi les équipes, je recherche les effectifs.'},
+  ]},
+ {num:11,phase:'BLOC 2 — INTENSIF',phaseColor:'#b08aff',dates:'11 – 17 août',
+  desc:"Scouting, pre-game, simulation match. Tapering physique progressif.",
+  alert:null,coaching:null,
+  seances:[
+   {id:'w11-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL — tapering -20%',corps:''},
+   {id:'w11-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio modéré',corps:''},
+   {id:'w11-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PUSH — tapering',corps:''},
+   {id:'w11-phy-jeu',jour:'JEU',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio léger',corps:''},
+   {id:'w11-phy-ven',jour:'VEN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'JAMBES — tapering',corps:''},
+   {id:'w11-phy-sam',jour:'SAM',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio spécifique',corps:''},
+   {id:'w11-arb-lun',jour:'LUN',cat:'arbitrage',type:'PRE-GAME',tc:'t-pregame',titre:'Pre-game #1 — Connaissance de soi et du crew',corps:'Support : Pré_game.pdf\nPréparer les caractéristiques de chaque collègue. Rédiger son template complet de briefing pre-game FIBA (1h30).'},
+   {id:'w11-arb-mar',jour:'MAR',cat:'arbitrage',type:'SCOUTING',tc:'t-scout',titre:'Scouting Elite 2 — 3 équipes supplémentaires',corps:'Joueurs à surveiller : comportement, réclamations, agressivité. Style de coach.\n→ Recherche web sur demande.'},
+   {id:'w11-arb-mer',jour:'MER',cat:'arbitrage',type:'VIDÉO MÉCANIQUE',tc:'t-meca',titre:'Simulation match complet — synthèse 3PO',corps:'Match Elite/Pro B : placements des 3 arbitres en temps réel.'},
+   {id:'w11-arb-jeu',jour:'JEU',cat:'arbitrage',type:'VIDÉO JUGEMENT',tc:'t-jug',titre:'Gestion tension fin de match',corps:'Support : E_tat_d_esprit.pdf + Contro_ler_contro_lable_.pdf\n5 situations fin de match.'},
+   {id:'w11-arb-ven',jour:'VEN',cat:'arbitrage',type:'PRE-GAME',tc:'t-pregame',titre:'Pre-game #2 — Scénarios "que faire si"',corps:'Support : Pré_game.pdf exercice 1\n5 situations inattendues possibles en Elite 2. Dialogue interne, comportement, actions (1h30).'},
+   {id:'w11-arb-sam',jour:'SAM',cat:'arbitrage',type:'SCOUTING',tc:'t-scout',titre:'Scouting Elite 2 — synthèse globale',corps:'Finaliser les fiches : 1 page par équipe. Document de référence saison.'},
+  ]},
+ {num:12,phase:'🏆 BLOC 3 — INTÉGRATION + STAGE',phaseColor:'#e0e05d',dates:'18 – 25 août 🏆',
+  desc:"Dernière semaine. Révision QCM finale. Pre-game #3. Tapering. STAGE FFBB 22-25 août.",
+  alert:"🏆 STAGE FFBB 22-25 août Paris — Checklist : QCM 20/25 ✅ · Mécanique 3PO ✅ · Template briefing ✅ · Scouting ✅ · Physique ✅",
+  coaching:null,
+  seances:[
+   {id:'w12-phy-lun',jour:'LUN',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PULL — tapering',corps:''},
+   {id:'w12-phy-mar',jour:'MAR',cat:'physique',type:'CARDIO',tc:'t-cardio',titre:'Cardio léger',corps:''},
+   {id:'w12-phy-mer',jour:'MER',cat:'physique',type:'MUSCU',tc:'t-muscu',titre:'PUSH — tapering',corps:''},
+   {id:'w12-arb-lun',jour:'LUN',cat:'arbitrage',type:'PRE-GAME',tc:'t-pregame',titre:'Pre-game #3 — Concentration sur la prestation',corps:'Support : Pré_game.pdf\nTransformer objectifs de finalité en objectifs de prestation. 3 objectifs pour le stage. Imagerie mentale : entrée en salle, briefing, premières actions (1h30).'},
+   {id:'w12-arb-mar',jour:'MAR',cat:'arbitrage',type:'QCM FINAL',tc:'t-regle',titre:'Révision finale — 25 questions niveau stage',corps:'Tous articles + interprétations + cas spéciaux.\nOBJECTIF : 22/25.\n→ Je génère le QCM final sur demande.'},
+   {id:'w12-arb-mer',jour:'MER',cat:'arbitrage',type:'VIDÉO SYNTHÈSE',tc:'t-jug',titre:'Bilan de l\'été — 5 progrès + 3 objectifs stage',corps:'Comparer notes S1 vs S12. 5 progrès concrets. 3 objectifs de match pour le stage.'},
+   {id:'w12-stage-ven',jour:'VEN 22',cat:'arbitrage',type:'STAGE FFBB',tc:'t-stage',titre:'Stage FFBB — Jour 1 (22 août)',corps:'Arrivée Paris. Test QCM officiel ≥ 20/25. Premier match/atelier.'},
+   {id:'w12-stage-sam',jour:'SAM 23',cat:'arbitrage',type:'STAGE FFBB',tc:'t-stage',titre:'Stage FFBB — Jour 2 (23 août)',corps:''},
+   {id:'w12-stage-dim',jour:'DIM 24',cat:'arbitrage',type:'STAGE FFBB',tc:'t-stage',titre:'Stage FFBB — Jour 3 (24 août)',corps:''},
+  ]},
+];
+
+// ── STORAGE ─────────────────────────────────────────────────────────────
+function load() {
+  try { return JSON.parse(localStorage.getItem('arbitre_tracker_v1') || '{}'); }
+  catch(e) { return {}; }
+}
+function save(data) {
+  try { localStorage.setItem('arbitre_tracker_v1', JSON.stringify(data)); } catch(e) {}
+}
+let STATE = load();
+
+function getSeance(id) { return STATE[id] || {done:false, realise:'', comment:''}; }
+function setSeance(id, obj) { STATE[id] = obj; save(STATE); }
+
+// ── MODAL STATE ──────────────────────────────────────────────────────────
+let currentModalId = null;
+
+function openModal(id) {
+  currentModalId = id;
+  const week = WEEKS.find(w => w.seances.some(s => s.id === id));
+  const seance = week.seances.find(s => s.id === id);
+  const st = getSeance(id);
+
+  const typeMap = {
+    't-meca':'VIDÉO MÉCANIQUE','t-jug':'VIDÉO JUGEMENT','t-crew':'VIDÉO CREW',
+    't-scout':'SCOUTING','t-pregame':'PRE-GAME','t-muscu':'MUSCULATION',
+    't-cardio':'CARDIO','t-regle':'RÈGLEMENT / QCM','t-coaching':'COACHING',
+    't-stage':'STAGE FFBB','t-repos':'REPOS'
+  };
+  const typeEl = document.getElementById('mType');
+  typeEl.textContent = seance.type;
+  typeEl.className = `modal-type seance-type ${seance.tc}`;
+
+  document.getElementById('mTitle').textContent = seance.titre;
+  document.getElementById('mJour').textContent = `${seance.jour} · Semaine ${week.num}`;
+  document.getElementById('mBody').innerHTML = seance.corps.replace(/\n/g,'<br>');
+  document.getElementById('mRealise').value = st.realise || '';
+  document.getElementById('mComment').value = st.comment || '';
+
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function saveModal() {
+  if (!currentModalId) return;
+  const st = getSeance(currentModalId);
+  st.realise = document.getElementById('mRealise').value;
+  st.comment = document.getElementById('mComment').value;
+  setSeance(currentModalId, st);
+  refreshCard(currentModalId);
+  updateGlobalStats();
+  closeModal();
+}
+
+function markDoneModal() {
+  if (!currentModalId) return;
+  const st = getSeance(currentModalId);
+  st.done = !st.done;
+  st.realise = document.getElementById('mRealise').value;
+  st.comment = document.getElementById('mComment').value;
+  setSeance(currentModalId, st);
+  refreshCard(currentModalId);
+  updateGlobalStats();
+  closeModal();
+}
+
+function resetModal() {
+  if (!currentModalId) return;
+  if (!confirm('Réinitialiser cette séance ? Commentaires supprimés.')) return;
+  setSeance(currentModalId, {done:false, realise:'', comment:''});
+  refreshCard(currentModalId);
+  updateGlobalStats();
+  closeModal();
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  currentModalId = null;
+}
+function closeModalOutside(e) { if(e.target.id==='modalOverlay') closeModal(); }
+
+// ── RENDER ───────────────────────────────────────────────────────────────
+function refreshCard(id) {
+  const el = document.getElementById('card-'+id);
+  if (!el) return;
+  const st = getSeance(id);
+  el.classList.toggle('done', st.done);
+  const btn = el.querySelector('.btn-done');
+  if(btn){
+    btn.className = 'btn-done ' + (st.done ? 'is-done' : 'not-done');
+    btn.textContent = st.done ? '✓ Fait' : 'Marquer fait';
+  }
+}
+
+function buildSidebar() {
+  const sb = document.getElementById('sidebar');
+  let lastPhase = '';
+  WEEKS.forEach(w => {
+    if (w.phase !== lastPhase) {
+      lastPhase = w.phase;
+      const div = document.createElement('div');
+      div.className = 'phase-divider';
+      div.textContent = w.phase;
+      sb.appendChild(div);
+    }
+    const total = w.seances.length;
+    const done = w.seances.filter(s => getSeance(s.id).done).length;
+    const pct = total ? Math.round(done/total*100) : 0;
+    const item = document.createElement('div');
+    item.className = 'nav-item' + (w.num===1?' active':'');
+    item.id = 'nav-w'+w.num;
+    item.onclick = () => selectWeek(w.num);
+    item.innerHTML = `<span class="nav-week">S${w.num}</span><span style="flex:1;font-size:.75rem">${w.dates}</span>
+      <div class="nav-prog"><div class="nav-prog-fill" id="npf-${w.num}" style="width:${pct}%"></div></div>`;
+    sb.appendChild(item);
+  });
+}
+
+function buildMain() {
+  const main = document.getElementById('main');
+  WEEKS.forEach(w => {
+    const card = document.createElement('div');
+    card.className = 'week-card' + (w.num===1?' active':'');
+    card.id = 'week-'+w.num;
+
+    let html = `
+      <div class="week-header">
+        <div class="week-num">${String(w.num).padStart(2,'0')}</div>
+        <div class="week-info">
+          <div class="week-title">Semaine ${w.num}</div>
+          <div class="week-dates">${w.dates}</div>
+          <div class="week-desc">${w.desc}</div>
+        </div>
+      </div>
+      <div class="week-progress">
+        <div class="prog-label">Progression</div>
+        <div class="prog-bar"><div class="prog-fill" id="wpf-${w.num}" style="width:0%"></div></div>
+        <div class="prog-pct" id="wpp-${w.num}">0%</div>
+      </div>`;
+
+    if(w.alert) html += `<div class="alert-box">⚠  ${w.alert}</div>`;
+    if(w.coaching) html += `
+      <div class="coaching-box">
+        <div class="coaching-title">🎯  ${w.coaching.date}  —  ${w.coaching.titre}</div>
+        <div class="coaching-body">${w.coaching.corps.replace(/\n/g,'<br>')}</div>
+      </div>`;
+
+    // Séances physique
+    const phy = w.seances.filter(s=>s.cat==='physique');
+    if(phy.length) {
+      html += `<div class="section-label">Physique</div><div class="seances-grid">`;
+      phy.forEach(s => { html += buildSeanceCard(s); });
+      html += `</div>`;
+    }
+
+    // Séances arbitrage
+    const arb = w.seances.filter(s=>s.cat==='arbitrage');
+    if(arb.length) {
+      html += `<div class="section-label">Arbitrage · 1h30/séance</div><div class="seances-grid">`;
+      arb.forEach(s => { html += buildSeanceCard(s); });
+      html += `</div>`;
+    }
+
+    // Note de semaine
+    html += `
+      <div class="week-note-section">
+        <div class="week-note-title">📝 Note globale de la semaine</div>
+        <textarea class="week-note-textarea" id="wnote-${w.num}" placeholder="Bilan de la semaine, ressenti général, ce qui a été différent du plan...">${STATE['week-note-'+w.num]||''}</textarea>
+        <button class="week-note-save" onclick="saveWeekNote(${w.num})">Sauvegarder la note</button>
+        <div class="saved-note" id="wsnote-${w.num}">${STATE['week-note-'+w.num]||''}</div>
+      </div>`;
+
+    card.innerHTML = html;
+    main.appendChild(card);
+  });
+
+  // Events après rendu
+  WEEKS.forEach(w => {
+    w.seances.forEach(s => {
+      const el = document.getElementById('card-'+s.id);
+      if(el) {
+        const st = getSeance(s.id);
+        el.classList.toggle('done', st.done);
+        const btn = el.querySelector('.btn-done');
+        if(btn) {
+          btn.className = 'btn-done ' + (st.done ? 'is-done' : 'not-done');
+          btn.textContent = st.done ? '✓ Fait' : 'Marquer fait';
+        }
+      }
+    });
+    updateWeekProgress(w.num);
+  });
+}
+
+function buildSeanceCard(s) {
+  return `
+    <div class="seance" id="card-${s.id}" onclick="openModal('${s.id}')">
+      <div class="seance-top">
+        <span class="seance-jour">${s.jour}</span>
+        <span class="seance-type ${s.tc}">${s.type}</span>
+      </div>
+      <div class="seance-title">${s.titre}</div>
+      ${s.corps ? `<div class="seance-corps">${s.corps.substring(0,80)}${s.corps.length>80?'…':''}</div>` : ''}
+      <div class="seance-actions" onclick="event.stopPropagation()">
+        <button class="btn-done not-done" onclick="quickToggle('${s.id}')">Marquer fait</button>
+        <button class="btn-comment" onclick="openModal('${s.id}')">Détail / Note</button>
+      </div>
+    </div>`;
+}
+
+function quickToggle(id) {
+  const st = getSeance(id);
+  st.done = !st.done;
+  setSeance(id, st);
+  refreshCard(id);
+  const weekNum = WEEKS.find(w => w.seances.some(s => s.id===id))?.num;
+  if(weekNum) updateWeekProgress(weekNum);
+  updateGlobalStats();
+  updateNavProg(weekNum);
+}
+
+function saveWeekNote(num) {
+  const val = document.getElementById('wnote-'+num).value;
+  STATE['week-note-'+num] = val;
+  save(STATE);
+  const el = document.getElementById('wsnote-'+num);
+  if(el) el.textContent = val;
+}
+
+function selectWeek(num) {
+  document.querySelectorAll('.week-card').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('week-'+num).classList.add('active');
+  document.getElementById('nav-w'+num).classList.add('active');
+}
+
+function updateWeekProgress(num) {
+  const w = WEEKS.find(x=>x.num===num);
+  if(!w) return;
+  const total = w.seances.length;
+  const done = w.seances.filter(s=>getSeance(s.id).done).length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  const bar = document.getElementById('wpf-'+num);
+  const lbl = document.getElementById('wpp-'+num);
+  if(bar) bar.style.width = pct+'%';
+  if(lbl) lbl.textContent = pct+'%';
+}
+
+function updateNavProg(num) {
+  const w = WEEKS.find(x=>x.num===num);
+  if(!w) return;
+  const total = w.seances.length;
+  const done = w.seances.filter(s=>getSeance(s.id).done).length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  const el = document.getElementById('npf-'+num);
+  if(el) el.style.width = pct+'%';
+}
+
+function updateGlobalStats() {
+  let total = 0, done = 0;
+  WEEKS.forEach(w => {
+    total += w.seances.length;
+    done += w.seances.filter(s=>getSeance(s.id).done).length;
+  });
+  document.getElementById('hTotal').textContent = total;
+  document.getElementById('hDone').textContent = done;
+  document.getElementById('hPct').textContent = total ? Math.round(done/total*100)+'%' : '0%';
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+buildSidebar();
+buildMain();
+updateGlobalStats();
+WEEKS.forEach(w => { updateWeekProgress(w.num); updateNavProg(w.num); });
+</script>
+
+<!-- SYNC BAR -->
+<div class="sync-bar">
+  <span class="sync-label">Sync</span>
+  <button class="sync-btn export-btn" onclick="openSyncModal('export')">⬇ Exporter</button>
+  <button class="sync-btn import-btn" onclick="openSyncModal('import')">⬆ Importer</button>
+  <button class="sync-btn reset-btn" onclick="confirmReset()">✕ Effacer tout</button>
+  <span class="sync-info" id="syncInfo">—</span>
+</div>
+
+<!-- SYNC MODAL -->
+<div class="modal-overlay" id="syncOverlay" onclick="closeSyncOutside(event)">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-type" id="syncModalType" style="color:var(--gold);font-family:'DM Mono',monospace;font-size:.7rem"></div>
+        <div class="modal-title" id="syncModalTitle"></div>
+      </div>
+      <button class="modal-close-x" onclick="closeSyncModal()">✕</button>
+    </div>
+    <div id="syncModalBody"></div>
+    <div class="modal-footer" style="margin-top:14px">
+      <button class="modal-btn secondary" onclick="closeSyncModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── SYNC MODAL ────────────────────────────────────────────────────────────
+function openSyncModal(mode) {
+  const overlay = document.getElementById('syncOverlay');
+  const body = document.getElementById('syncModalBody');
+  const title = document.getElementById('syncModalTitle');
+  const type = document.getElementById('syncModalType');
+
+  if (mode === 'export') {
+    type.textContent = 'EXPORT — PC vers iPhone';
+    title.textContent = 'Copie tes données';
+
+    const jsonStr = JSON.stringify({
+      app: 'Tracker Arbitre Elite 2',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      data: load()
+    }, null, 2);
+
+    body.innerHTML = `
+      <p style="font-size:.8rem;color:var(--grey);margin-bottom:12px;line-height:1.55">
+        <b style="color:var(--white)">Comment faire :</b><br>
+        1. Clique le bouton ci-dessous pour copier le code<br>
+        2. Ouvre <b style="color:var(--gold)">Notes</b> sur ton iPhone et colle le texte<br>
+        3. Sur l'iPhone : ouvre l'app → Importer → colle depuis Notes
+      </p>
+      <textarea id="exportTextarea" readonly style="
+        width:100%;height:160px;background:var(--bg4);border:1px solid var(--border);
+        border-radius:6px;color:var(--regle);font-family:'DM Mono',monospace;
+        font-size:0.62rem;padding:10px;resize:none;outline:none;line-height:1.4
+      ">${jsonStr.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="modal-btn primary" onclick="copyExport()" id="copyBtn">
+          📋 Copier le code
+        </button>
+        <span style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--grey);
+          align-self:center" id="copyConfirm"></span>
+      </div>
+      <p style="font-size:.72rem;color:var(--grey2);margin-top:10px;font-family:'DM Mono',monospace">
+        ${Object.keys(load()).length} entrées · généré le ${new Date().toLocaleString('fr-FR')}
+      </p>
+    `;
+    // Set real value (not HTML-escaped) for copying
+    setTimeout(() => {
+      const ta = document.getElementById('exportTextarea');
+      if (ta) ta.value = jsonStr;
+    }, 10);
+
+  } else {
+    type.textContent = 'IMPORT — iPhone vers PC';
+    title.textContent = 'Colle tes données';
+
+    body.innerHTML = `
+      <p style="font-size:.8rem;color:var(--grey);margin-bottom:12px;line-height:1.55">
+        <b style="color:var(--white)">Comment faire :</b><br>
+        1. Sur l'iPhone : ouvre l'app → Exporter → Copier le code<br>
+        2. Ici : colle le code dans la zone ci-dessous<br>
+        3. Clique <b style="color:var(--gold)">Charger</b>
+      </p>
+      <textarea id="importTextarea" placeholder="Colle ici le code copié depuis ton iPhone..." style="
+        width:100%;height:160px;background:var(--bg4);border:1px solid var(--border);
+        border-radius:6px;color:var(--white);font-family:'DM Mono',monospace;
+        font-size:0.62rem;padding:10px;resize:none;outline:none;line-height:1.4
+      "></textarea>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="modal-btn primary" onclick="doImport()">⬆ Charger les données</button>
+      </div>
+      <p style="font-size:.72rem;color:#ff7a7a;margin-top:10px;font-family:'DM Mono',monospace">
+        ⚠ Tes données actuelles seront remplacées. Exporte d'abord si besoin !
+      </p>
+    `;
+  }
+
+  overlay.classList.add('open');
+}
+
+function copyExport() {
+  const ta = document.getElementById('exportTextarea');
+  if (!ta) return;
+  ta.select();
+  try {
+    navigator.clipboard.writeText(ta.value).then(() => {
+      document.getElementById('copyBtn').textContent = '✓ Copié !';
+      document.getElementById('copyBtn').style.background = 'var(--done)';
+      document.getElementById('copyBtn').style.borderColor = 'var(--done-border)';
+      document.getElementById('copyBtn').style.color = 'var(--done-text)';
+      document.getElementById('copyConfirm').textContent = 'Code copié — colle-le dans Notes sur iPhone';
+    });
+  } catch(e) {
+    // Fallback
+    document.execCommand('copy');
+    document.getElementById('copyBtn').textContent = '✓ Copié !';
+    document.getElementById('copyConfirm').textContent = 'Code copié !';
+  }
+}
+
+function doImport() {
+  const ta = document.getElementById('importTextarea');
+  if (!ta || !ta.value.trim()) { showToast('Colle d\'abord le code dans la zone'); return; }
+  try {
+    const obj = JSON.parse(ta.value.trim());
+    if (!obj.data || typeof obj.data !== 'object') { showToast('❌ Code invalide'); return; }
+
+    const exportedAt = obj.exportedAt ? new Date(obj.exportedAt).toLocaleString('fr-FR') : 'date inconnue';
+    const entries = Object.keys(obj.data).length;
+
+    if (!confirm(`Importer les données du ${exportedAt} ?\n${entries} entrées trouvées.\n\nATTENTION : tes données actuelles seront remplacées.`)) return;
+
+    STATE = obj.data;
+    save(STATE);
+
+    WEEKS.forEach(w => {
+      w.seances.forEach(s => { refreshCard(s.id); });
+      const noteEl = document.getElementById('wnote-'+w.num);
+      if(noteEl) noteEl.value = STATE['week-note-'+w.num] || '';
+      const snoteEl = document.getElementById('wsnote-'+w.num);
+      if(snoteEl) snoteEl.textContent = STATE['week-note-'+w.num] || '';
+      updateWeekProgress(w.num);
+      updateNavProg(w.num);
+    });
+    updateGlobalStats();
+    updateSyncInfo();
+    closeSyncModal();
+    showToast(`✓ Import réussi — ${entries} entrées chargées`);
+  } catch(e) {
+    showToast('❌ Code invalide — vérifie que tu as tout copié');
+  }
+}
+
+function closeSyncModal() { document.getElementById('syncOverlay').classList.remove('open'); }
+function closeSyncOutside(e) { if(e.target.id==='syncOverlay') closeSyncModal(); }
+
+// ── RESET TOTAL ────────────────────────────────────────────────────────────
+function confirmReset() {
+  if (!confirm('Effacer TOUTES tes données ?\nCette action est irréversible.\n\nExporte d\'abord tes données si tu veux les garder !')) return;
+  STATE = {};
+  save(STATE);
+  WEEKS.forEach(w => {
+    w.seances.forEach(s => refreshCard(s.id));
+    updateWeekProgress(w.num);
+    updateNavProg(w.num);
+  });
+  updateGlobalStats();
+  updateSyncInfo();
+  showToast('Données effacées');
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── SYNC INFO ──────────────────────────────────────────────────────────────
+function updateSyncInfo() {
+  const el = document.getElementById('syncInfo');
+  const entries = Object.keys(load()).length;
+  el.textContent = entries === 0 ? 'Aucune donnée' : `${entries} entrées sauvegardées`;
+}
+
+updateSyncInfo();
+</script>
+
+</body>
+</html>
