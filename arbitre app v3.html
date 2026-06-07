@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Arbitre E2">
+<title>Arbitre Elite 2 — App</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root {
+  --bg:#080810; --bg2:#0f0f1a; --bg3:#141422; --bg4:#1a1a2e;
+  --border:#1e1e35; --gold:#C9A84C; --gold2:#e8c96a;
+  --white:#f0f0ff; --grey:#6a6a8a; --grey2:#3a3a5a;
+  --meca:#6ab0ff; --jug:#b08aff; --crew:#7adf9a;
+  --scout:#ff9a5a; --pregame:#f7d06a;
+  --muscu:#ff7a7a; --cardio:#ffb347; --regle:#5de0d8;
+  --coaching:#C9A84C; --stage:#e0e05d;
+  --done-bg:#1a2e1a; --done-border:#3a7a3a; --done-text:#7adf7a;
+  --danger:#ff5a5a; --nav-h:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;
+  min-height:100vh;overflow-x:hidden;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom))}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  background:var(--bg2);border-top:1px solid var(--border);
+  display:flex;align-items:flex-start;padding-top:8px;
+  z-index:200;padding-bottom:env(safe-area-inset-bottom)
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:4px 8px;border:none;background:none;
+  font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--grey);transition:color .15s
+}
+.nav-btn.active{color:var(--gold)}
+.nav-btn .ni{font-size:1.3rem;line-height:1}
+
+/* ── SCREENS ── */
+.screen{display:none;padding:16px;min-height:calc(100vh - var(--nav-h) - 40px);animation:fadeIn .2s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HEADER ── */
+.screen-header{margin-bottom:20px}
+.screen-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;color:var(--white)}
+.screen-title span{color:var(--gold)}
+.screen-sub{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--grey);
+  letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:14px;margin-bottom:12px}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;
+  color:var(--white);margin-bottom:4px}
+.card-sub{font-size:.75rem;color:var(--grey);line-height:1.5}
+
+/* ── DASHBOARD ── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:14px;text-align:center}
+.stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;line-height:1}
+.stat-lbl{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:1px;
+  text-transform:uppercase;color:var(--grey);margin-top:3px}
+.dash-full{grid-column:1/-1}
+
+/* ── PROGRESS BARS ── */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.prog-lbl{font-size:.72rem;color:var(--grey);min-width:90px}
+.prog-bar{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.prog-pct{font-family:'DM Mono',monospace;font-size:.65rem;min-width:32px;text-align:right}
+
+/* ── SECTION LABEL ── */
+.sec-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:2px;
+  text-transform:uppercase;color:var(--grey2);margin:16px 0 8px;
+  display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── BUTTONS ── */
+.btn{font-family:'DM Mono',monospace;font-size:.68rem;padding:9px 16px;
+  border-radius:8px;cursor:pointer;border:1px solid;transition:all .15s;
+  letter-spacing:.5px;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:700}
+.btn-primary:hover{background:var(--gold2)}
+.btn-secondary{background:transparent;border-color:var(--grey2);color:var(--grey)}
+.btn-secondary:hover{border-color:var(--white);color:var(--white)}
+.btn-danger{background:transparent;border-color:#3a1515;color:var(--danger)}
+.btn-danger:hover{background:#1a0808}
+.btn-full{width:100%;justify-content:center}
+
+/* ── FORM ELEMENTS ── */
+.form-group{margin-bottom:12px}
+.form-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:1px;
+  text-transform:uppercase;color:var(--grey2);margin-bottom:5px;display:block}
+.form-input,.form-select,.form-textarea{
+  width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:8px;
+  color:var(--white);font-family:'DM Sans',sans-serif;font-size:.82rem;
+  padding:10px 12px;outline:none;transition:border-color .15s;appearance:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold)}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.5}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236a6a8a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stars{display:flex;gap:6px;margin-top:4px}
+.star{font-size:1.4rem;cursor:pointer;opacity:.3;transition:all .15s;line-height:1}
+.star.active{opacity:1}
+
+/* ── MATCH CARD ── */
+.match-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s;position:relative}
+.match-card:hover{border-color:var(--grey2);transform:translateY(-1px)}
+.match-card.has-note{border-left:3px solid var(--gold)}
+.match-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.match-date{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--gold);
+  background:var(--bg3);padding:3px 8px;border-radius:4px}
+.match-comp{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--grey);
+  padding:3px 8px;border-radius:4px;border:1px solid var(--border)}
+.match-pos{font-family:'DM Mono',monospace;font-size:.6rem;
+  padding:3px 8px;border-radius:4px;font-weight:700}
+.pos-cc{background:#1a2535;color:var(--meca)}
+.pos-u1{background:#1f1528;color:var(--jug)}
+.pos-u2{background:#121e14;color:var(--crew)}
+.match-teams{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;
+  color:var(--white);margin-bottom:4px}
+.match-crew{font-size:.72rem;color:var(--grey)}
+.match-note-badge{position:absolute;top:12px;right:12px;font-family:'DM Mono',monospace;
+  font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:6px}
+.match-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.match-tag{font-size:.65rem;padding:2px 8px;border-radius:4px;
+  font-family:'DM Mono',monospace;letter-spacing:.3px}
+.tag-fort{background:#1a2e1a;color:var(--done-text);border:1px solid var(--done-border)}
+.tag-amelio{background:#2a1a08;color:var(--cardio);border:1px solid #503008}
+.tag-piste{background:#1a1528;color:var(--jug);border:1px solid #301d50}
+.match-delete{position:absolute;bottom:10px;right:12px;background:none;border:none;
+  color:var(--grey2);cursor:pointer;font-size:.75rem;padding:3px 6px;border-radius:4px}
+.match-delete:hover{color:var(--danger)}
+
+/* ── CHART ── */
+.chart-wrap{background:var(--bg3);border-radius:10px;padding:14px;margin-bottom:12px}
+.chart-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:80px}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bar{width:100%;border-radius:4px 4px 0 0;transition:height .4s ease;min-height:2px}
+.chart-bar-lbl{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--grey);
+  text-align:center;letter-spacing:.3px}
+.chart-bar-val{font-family:'DM Mono',monospace;font-size:.6rem;font-weight:700}
+
+/* ── CALENDAR ── */
+.cal-month{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-month-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--white)}
+.cal-nav{background:none;border:1px solid var(--border);border-radius:6px;
+  color:var(--grey);cursor:pointer;padding:4px 10px;font-size:.9rem}
+.cal-nav:hover{border-color:var(--gold);color:var(--gold)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dow{font-family:'DM Mono',monospace;font-size:.55rem;text-align:center;
+  color:var(--grey2);letter-spacing:.5px;padding:4px 0}
+.cal-day{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;font-size:.72rem;color:var(--grey);
+  position:relative;cursor:default}
+.cal-day.today{background:var(--bg3);color:var(--white);font-weight:600}
+.cal-day.has-match{background:var(--bg3);color:var(--gold);cursor:pointer;font-weight:700}
+.cal-day.has-match::after{content:'';position:absolute;bottom:3px;
+  width:4px;height:4px;border-radius:50%;background:var(--gold)}
+.cal-day.empty{opacity:0}
+
+/* ── OBJECTIFS ── */
+.obj-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px}
+.obj-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--grey2);
+  flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;margin-top:1px}
+.obj-check.done{background:var(--done-bg);border-color:var(--done-border)}
+.obj-check.done::after{content:'✓';font-size:.7rem;color:var(--done-text)}
+.obj-body{flex:1}
+.obj-title{font-size:.82rem;color:var(--white);margin-bottom:2px}
+.obj-meta{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--grey)}
+.obj-delete{background:none;border:none;color:var(--grey2);cursor:pointer;font-size:.8rem;padding:2px 5px}
+.obj-delete:hover{color:var(--danger)}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.85);z-index:500;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;
+  width:100%;max-width:600px;max-height:90vh;overflow-y:auto;
+  padding-bottom:calc(20px + env(safe-area-inset-bottom));
+  animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--grey2);border-radius:2px;
+  margin:0 auto 16px}
+.modal-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-title-text{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:var(--white)}
+.modal-close{background:none;border:none;color:var(--grey);font-size:1.2rem;cursor:pointer;padding:4px}
+
+/* ── PISTE AUTO ── */
+.piste-auto{background:var(--bg3);border:1px solid var(--jug);border-radius:8px;
+  padding:10px 12px;margin-top:8px}
+.piste-auto-title{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:1px;
+  text-transform:uppercase;color:var(--jug);margin-bottom:6px}
+.piste-item{font-size:.75rem;color:var(--grey);padding:3px 0;
+  display:flex;gap:6px;align-items:flex-start;line-height:1.4}
+.piste-item::before{content:'→';color:var(--jug);flex-shrink:0}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(var(--nav-h) + 12px + env(safe-area-inset-bottom));
+  left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--bg3);border:1px solid var(--gold);border-radius:10px;
+  padding:10px 20px;font-family:'DM Mono',monospace;font-size:.72rem;
+  color:var(--white);z-index:600;opacity:0;transition:all .3s;
+  pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── SYNC BAR ── */
+.sync-bar{position:fixed;top:0;right:0;z-index:300;padding:8px 12px;
+  display:flex;gap:6px}
+.sync-mini{font-family:'DM Mono',monospace;font-size:.58rem;padding:5px 10px;
+  border-radius:6px;cursor:pointer;border:1px solid;transition:all .15s}
+.sync-mini.exp{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
+.sync-mini.imp{border-color:var(--grey2);color:var(--grey);background:var(--bg2)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:32px 16px;color:var(--grey)}
+.empty-icon{font-size:2.5rem;margin-bottom:10px;opacity:.4}
+.empty-text{font-size:.82rem;line-height:1.5}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--grey2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- SYNC BAR TOP -->
+<div class="sync-bar">
+  <button class="sync-mini exp" onclick="openSync('export')">⬇ Export</button>
+  <button class="sync-mini imp" onclick="openSync('import')">⬆ Import</button>
+</div>
+
+<!-- SCREENS -->
+
+<!-- 1. DASHBOARD -->
+<div class="screen active" id="screen-dash">
+  <div class="screen-header" style="margin-top:8px">
+    <div class="screen-title">Bonjour <span>Hugo</span> 👋</div>
+    <div class="screen-sub" id="dash-date"></div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="stat-box">
+      <div class="stat-num" id="d-matchs" style="color:var(--gold)">0</div>
+      <div class="stat-lbl">Matchs arbitrés</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="d-note" style="color:var(--meca)">—</div>
+      <div class="stat-lbl">Note moyenne</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="d-seances" style="color:var(--crew)">0</div>
+      <div class="stat-lbl">Séances été faites</div>
+    </div>
+    <div class="stat-box dash-full" style="display:flex;gap:20px;justify-content:center">
+      <div style="text-align:center">
+        <div class="stat-num" id="d-seances-saison" style="color:var(--pregame);font-size:1.5rem">0</div>
+        <div class="stat-lbl">Séances saison</div>
+      </div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="d-pct" style="color:var(--pregame)">0%</div>
+      <div class="stat-lbl">Progression été</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Progression par axe</div>
+  <div class="card">
+    <div class="prog-row">
+      <div class="prog-lbl">Mécanique 3PO</div>
+      <div class="prog-bar"><div class="prog-fill" id="p-meca" style="background:var(--meca);width:0%"></div></div>
+      <div class="prog-pct" id="pp-meca" style="color:var(--meca)">0%</div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-lbl">Jugement</div>
+      <div class="prog-bar"><div class="prog-fill" id="p-jug" style="background:var(--jug);width:0%"></div></div>
+      <div class="prog-pct" id="pp-jug" style="color:var(--jug)">0%</div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-lbl">Gestion Crew</div>
+      <div class="prog-bar"><div class="prog-fill" id="p-crew" style="background:var(--crew);width:0%"></div></div>
+      <div class="prog-pct" id="pp-crew" style="color:var(--crew)">0%</div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-lbl">Règlement</div>
+      <div class="prog-bar"><div class="prog-fill" id="p-regle" style="background:var(--regle);width:0%"></div></div>
+      <div class="prog-pct" id="pp-regle" style="color:var(--regle)">0%</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Prochain match</div>
+  <div id="d-next-match">
+    <div class="empty-state"><div class="empty-icon">🏀</div><div class="empty-text">Aucun match à venir.<br>Ajoute un match dans l'onglet Saison.</div></div>
+  </div>
+
+  <div class="sec-label">Objectifs en cours</div>
+  <div id="d-objectifs-preview"></div>
+</div>
+
+<!-- 2. ÉTÉ -->
+<div class="screen" id="screen-ete">
+  <div class="screen-header" style="margin-top:8px">
+    <div class="screen-title">Préparation <span>Été</span></div>
+    <div class="screen-sub">9 juin → 25 août 2026</div>
+  </div>
+  <div id="ete-week-nav" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"></div>
+  <div id="ete-content"></div>
+</div>
+
+<!-- 3. SAISON -->
+<div class="screen" id="screen-saison">
+  <div class="screen-header" style="margin-top:8px">
+    <div class="screen-title">Saison <span>26–27</span></div>
+    <div class="screen-sub">Elite 2 · HN2</div>
+  </div>
+
+  <!-- Calendrier -->
+  <div class="sec-label">Calendrier</div>
+  <div class="card">
+    <div class="cal-month">
+      <button class="cal-nav" onclick="calNav(-1)">‹</button>
+      <div class="cal-month-title" id="calTitle"></div>
+      <button class="cal-nav" onclick="calNav(1)">›</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <div class="sec-label" style="margin:0">Mes matchs</div>
+    <button class="btn btn-primary" onclick="openMatchModal(null)" style="font-size:.62rem;padding:7px 12px">+ Ajouter un match</button>
+  </div>
+  <div id="matchs-list"></div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;margin-top:16px">
+    <div class="sec-label" style="margin:0">Mes séances saison</div>
+    <button class="btn btn-primary" onclick="openSeanceModal(null)" style="font-size:.62rem;padding:7px 12px">+ Ajouter une séance</button>
+  </div>
+  <div id="seances-saison-list"></div>
+</div>
+
+<!-- 4. OBJECTIFS -->
+<div class="screen" id="screen-obj">
+  <div class="screen-header" style="margin-top:8px">
+    <div class="screen-title">Mes <span>Objectifs</span></div>
+    <div class="screen-sub">Suivi avec le coach</div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <button class="btn btn-primary btn-full" onclick="openObjModal()">+ Nouvel objectif</button>
+  </div>
+
+  <div class="sec-label">En cours</div>
+  <div id="obj-encours"></div>
+  <div class="sec-label">Atteints ✓</div>
+  <div id="obj-atteints"></div>
+</div>
+
+<!-- 5. PROGRESSION -->
+<div class="screen" id="screen-prog">
+  <div class="screen-header" style="margin-top:8px">
+    <div class="screen-title">Ma <span>Progression</span></div>
+    <div class="screen-sub">Courbes par axe · Saison 26-27</div>
+  </div>
+
+  <div class="sec-label">Notes par match</div>
+  <div class="chart-wrap">
+    <div class="chart-title">Évolution note observateur</div>
+    <div class="chart-bars" id="chart-notes"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--grey);text-align:center;margin-top:6px" id="chart-avg"></div>
+  </div>
+
+  <div class="sec-label">Axes de travail récurrents</div>
+  <div class="chart-wrap">
+    <div class="chart-title">Fréquence des pistes de travail</div>
+    <div id="axes-chart"></div>
+  </div>
+
+  <div class="sec-label">Derniers bilans de match</div>
+  <div id="prog-recent-matchs"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="goScreen('dash',this)"><span class="ni">🏠</span>Accueil</button>
+  <button class="nav-btn" onclick="goScreen('ete',this)"><span class="ni">☀️</span>Été</button>
+  <button class="nav-btn" onclick="goScreen('saison',this)"><span class="ni">🏀</span>Saison</button>
+  <button class="nav-btn" onclick="goScreen('obj',this)"><span class="ni">🎯</span>Objectifs</button>
+  <button class="nav-btn" onclick="goScreen('prog',this)"><span class="ni">📈</span>Progression</button>
+</nav>
+
+<!-- MODAL MATCH -->
+<div class="modal-overlay" id="matchModal" onclick="closeIfOutside(event,'matchModal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header-row">
+      <div class="modal-title-text" id="matchModalTitle">Nouveau match</div>
+      <button class="modal-close" onclick="closeModal('matchModal')">✕</button>
+    </div>
+    <input type="hidden" id="matchId">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-input" id="mDate">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Compétition</label>
+        <select class="form-select" id="mComp">
+          <option>Elite 2</option>
+          <option>Pro B</option>
+          <option>Coupe de France</option>
+          <option>N1</option>
+          <option>Tournoi</option>
+          <option>Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Équipes (Domicile vs Visiteur)</label>
+      <input type="text" class="form-input" id="mTeams" placeholder="Ex : Nantes vs Paris">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Ma position</label>
+        <select class="form-select" id="mPos">
+          <option value="CC">CC (Crew Chief)</option>
+          <option value="U1">U1</option>
+          <option value="U2">U2</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note observateur</label>
+        <input type="number" class="form-input" id="mNote" placeholder="Ex : 7.5" min="0" max="10" step="0.1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Collègues arbitres</label>
+      <input type="text" class="form-input" id="mCrew" placeholder="Ex : Dupont, Martin">
+    </div>
+    <div class="form-group">
+      <label class="form-label">✅ Points forts</label>
+      <textarea class="form-textarea" id="mForts" placeholder="Ce qui a bien fonctionné ce match..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">⚠ Points à améliorer</label>
+      <textarea class="form-textarea" id="mAmelio" placeholder="Ce qui doit progresser..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">📝 Notes libres</label>
+      <textarea class="form-textarea" id="mNotes" placeholder="Ambiance, situations particulières..."></textarea>
+    </div>
+
+    <!-- Pistes auto -->
+    <div id="pistesAuto" style="display:none">
+      <div class="piste-auto">
+        <div class="piste-auto-title">💡 Pistes de travail suggérées</div>
+        <div id="pistesContent"></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="saveMatch()">Sauvegarder</button>
+      <button class="btn btn-secondary" onclick="generatePistes()">💡 Générer pistes</button>
+      <button class="btn btn-danger" id="deleteMatchBtn" onclick="deleteMatch()" style="display:none">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL OBJECTIF -->
+<div class="modal-overlay" id="objModal" onclick="closeIfOutside(event,'objModal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header-row">
+      <div class="modal-title-text">Nouvel objectif</div>
+      <button class="modal-close" onclick="closeModal('objModal')">✕</button>
+    </div>
+    <input type="hidden" id="objId">
+    <div class="form-group">
+      <label class="form-label">Intitulé de l'objectif</label>
+      <input type="text" class="form-input" id="oTitle" placeholder="Ex : Maîtriser les rotations 3PO">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Axe</label>
+        <select class="form-select" id="oAxe">
+          <option>Mécanique 3PO</option>
+          <option>Jugement</option>
+          <option>Gestion Crew</option>
+          <option>Règlement</option>
+          <option>Pre-game</option>
+          <option>Physique</option>
+          <option>Mental</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date limite</label>
+        <input type="date" class="form-input" id="oDate">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Comment je mesure cet objectif</label>
+      <textarea class="form-textarea" id="oMesure" placeholder="Ex : Score QCM ≥ 20/25, validé par le coach..." style="min-height:60px"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Lié à un coaching</label>
+      <select class="form-select" id="oCoaching">
+        <option value="">Aucun</option>
+        <option>Coaching #1 (≈ 17 juin)</option>
+        <option>Coaching #2 (≈ 2 juillet)</option>
+        <option>Coaching #3 (≈ 14 juillet)</option>
+        <option>Coaching #4 (≈ 28 juillet)</option>
+        <option>Coaching #5 (≈ 4 août)</option>
+        <option>En saison</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" onclick="saveObj()">Sauvegarder</button>
+      <button class="btn btn-secondary" onclick="closeModal('objModal')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SÉANCE SAISON -->
+<div class="modal-overlay" id="seanceModal" onclick="closeIfOutside(event,'seanceModal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header-row">
+      <div class="modal-title-text" id="seanceModalTitle">Nouvelle séance</div>
+      <button class="modal-close" onclick="closeModal('seanceModal')">✕</button>
+    </div>
+    <input type="hidden" id="seanceId">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-input" id="sDate">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Durée</label>
+        <select class="form-select" id="sDuree">
+          <option>30 min</option>
+          <option>45 min</option>
+          <option value="1h" selected>1h</option>
+          <option>1h30</option>
+          <option>2h</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Type de séance</label>
+      <select class="form-select" id="sType" onchange="updateSeanceColor()">
+        <option value="meca">🎬 Vidéo — Mécanique 3PO</option>
+        <option value="jug">🎬 Vidéo — Jugement</option>
+        <option value="crew">🎬 Vidéo — Gestion Crew</option>
+        <option value="regle">📚 Règlement / QCM</option>
+        <option value="pregame">📋 Pre-game</option>
+        <option value="scout">🔍 Scouting équipe</option>
+        <option value="coaching">🎯 Coaching</option>
+        <option value="muscu">💪 Musculation</option>
+        <option value="cardio">🏃 Cardio</option>
+        <option value="autre">📝 Autre</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Thème / Sujet travaillé</label>
+      <input type="text" class="form-input" id="sTheme" placeholder="Ex : Rotations 3PO, Art. 31-44, Pick & Roll...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">✅ Ce que j'ai fait / appris</label>
+      <textarea class="form-textarea" id="sFait" placeholder="Décris ce que tu as travaillé, les points retenus..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">⚠ Points à retravailler</label>
+      <textarea class="form-textarea" id="sRetrav" placeholder="Ce qui reste flou, à revoir..." style="min-height:60px"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="saveSeance()">Sauvegarder</button>
+      <button class="btn btn-danger" id="deleteSeanceBtn" onclick="deleteSeance()" style="display:none">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SYNC -->
+<div class="modal-overlay" id="syncModal" onclick="closeIfOutside(event,'syncModal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header-row">
+      <div class="modal-title-text" id="syncTitle">Synchronisation</div>
+      <button class="modal-close" onclick="closeModal('syncModal')">✕</button>
+    </div>
+    <div id="syncBody"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-secondary" onclick="closeModal('syncModal')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// STATE & STORAGE
+// ══════════════════════════════════════════════════════════════
+function load(){try{return JSON.parse(localStorage.getItem('arbitre_v2')||'{}')}catch{return{}}}
+function save(d){try{localStorage.setItem('arbitre_v2',JSON.stringify(d))}catch{}}
+let S = load();
+function getS(k,def){return S[k]!==undefined?S[k]:def}
+function setS(k,v){S[k]=v;save(S)}
+
+// ══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function goScreen(id, btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='dash') renderDash();
+  if(id==='ete') renderEte();
+  if(id==='saison'){renderMatchs();renderCal();renderSeancesSaison()}
+  if(id==='obj') renderObj();
+  if(id==='prog') renderProg();
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════
+function renderDash(){
+  const now = new Date();
+  document.getElementById('dash-date').textContent =
+    now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  // Stats été
+  const eteSeances = getEteSeances();
+  const total = eteSeances.length;
+  const done = eteSeances.filter(s=>getS('done_'+s.id,false)).length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('d-seances').textContent = done;
+  document.getElementById('d-pct').textContent = pct+'%';
+
+  // Stats matchs
+  const matchs = getS('matchs',[]);
+  document.getElementById('d-matchs').textContent = matchs.length;
+  const seancesSaison = getS('seances_saison',[]);
+  const dsEl = document.getElementById('d-seances-saison');
+  if(dsEl) dsEl.textContent = seancesSaison.length;
+  const notes = matchs.filter(m=>m.note).map(m=>parseFloat(m.note));
+  const avg = notes.length ? (notes.reduce((a,b)=>a+b,0)/notes.length).toFixed(1) : '—';
+  document.getElementById('d-note').textContent = avg;
+
+  // Progress axes
+  const axePct = calcAxePct();
+  ['meca','jug','crew','regle'].forEach(ax=>{
+    document.getElementById('p-'+ax).style.width = axePct[ax]+'%';
+    document.getElementById('pp-'+ax).textContent = axePct[ax]+'%';
+  });
+
+  // Prochain match
+  const upcoming = matchs.filter(m=>new Date(m.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const nextEl = document.getElementById('d-next-match');
+  if(upcoming.length){
+    const m = upcoming[0];
+    const d = new Date(m.date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+    nextEl.innerHTML = `<div class="match-card" onclick="openMatchModal('${m.id}')">
+      <div class="match-top">
+        <span class="match-date">${d}</span>
+        <span class="match-comp">${m.comp}</span>
+        <span class="match-pos pos-${m.pos.toLowerCase()}">${m.pos}</span>
+      </div>
+      <div class="match-teams">${m.teams||'Match à venir'}</div>
+      <div class="match-crew">${m.crew||''}</div>
+    </div>`;
+  } else {
+    nextEl.innerHTML = `<div class="empty-state"><div class="empty-icon">🏀</div><div class="empty-text">Aucun match à venir.</div></div>`;
+  }
+
+  // Objectifs preview
+  const objs = getS('objectifs',[]).filter(o=>!o.done).slice(0,3);
+  const objEl = document.getElementById('d-objectifs-preview');
+  if(objs.length){
+    objEl.innerHTML = objs.map(o=>`
+      <div class="obj-card" style="cursor:pointer" onclick="goScreen('obj',document.querySelectorAll('.nav-btn')[3])">
+        <div class="obj-check${o.done?' done':''}"></div>
+        <div class="obj-body">
+          <div class="obj-title">${o.title}</div>
+          <div class="obj-meta">${o.axe}${o.date?' · avant '+new Date(o.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):''}</div>
+        </div>
+      </div>`).join('');
+  } else {
+    objEl.innerHTML = `<div class="empty-state"><div class="empty-icon">🎯</div><div class="empty-text">Aucun objectif en cours.<br>Va dans l'onglet Objectifs.</div></div>`;
+  }
+}
+
+function calcAxePct(){
+  const all = getEteSeances();
+  const cats = {meca:['t-meca'],jug:['t-jug'],crew:['t-crew'],regle:['t-regle']};
+  const res = {meca:0,jug:0,crew:0,regle:0};
+  Object.keys(cats).forEach(k=>{
+    const matching = all.filter(s=>cats[k].includes(s.tc));
+    const done = matching.filter(s=>getS('done_'+s.id,false)).length;
+    res[k] = matching.length ? Math.round(done/matching.length*100) : 0;
+  });
+  return res;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ÉTÉ DATA
+// ══════════════════════════════════════════════════════════════
+const ETE_WEEKS = [
+ {num:1,dates:'9–15 juin',phase:'Bloc 1',seances:[
+  {id:'w1-arb-lun',jour:'LUN',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Positions AT/AC/AK',corps:'IOT_3PO_Basique Ch.2.1-2.5 · Lecture 30\' + vidéo 45\' + notes 15\''},
+  {id:'w1-arb-mar',jour:'MAR',type:'QCM RÈGLE.',tc:'t-regle',titre:'Art. 1 à 10',corps:'Étude 45\' + 20 questions + révision erreurs · Objectif 85%+'},
+  {id:'w1-arb-mer',jour:'MER',type:'VIDÉO JUG.',tc:'t-jug',titre:'Patient call — 4 étapes',corps:'10 situations de sur-sifflet potentiel · Doc Principes_'},
+  {id:'w1-arb-jeu',jour:'JEU',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Triangle dynamique',corps:'IOT_3PO_Basique Ch.2.6-2.8 · Dessiner le triangle'},
+  {id:'w1-arb-ven',jour:'VEN',type:'QCM RÈGLE.',tc:'t-regle',titre:'Art. 11 à 20',corps:'Étude 45\' + 20 questions + révision · Objectif 85%+'},
+  {id:'w1-arb-sam',jour:'SAM',type:'VIDÉO CREW',tc:'t-crew',titre:'Briefing pre-game FIBA',corps:'Pre_game.pdf · Template de briefing à rédiger'},
+  {id:'w1-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL',corps:''},
+  {id:'w1-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:'Selon ressenti du genou'},
+  {id:'w1-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH',corps:''},
+  {id:'w1-phy-jeu',jour:'JEU',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+  {id:'w1-phy-ven',jour:'VEN',type:'MUSCU',tc:'t-muscu',titre:'JAMBES',corps:'Attention genou'},
+  {id:'w1-phy-sam',jour:'SAM',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+ ]},
+ {num:2,dates:'16–22 juin',phase:'Bloc 1',coaching:'Coaching #1 ≈ 17 juin — Bilan S1',seances:[
+  {id:'w2-arb-lun',jour:'LUN',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Rotations déclenchantes',corps:'IOT_3PO_Basique Ch.2.8 + Avancé Ch.2.1-2.4'},
+  {id:'w2-coaching',jour:'MAR',type:'COACHING',tc:'t-coaching',titre:'Séance coaching #1 — 1h',corps:'Bilan S1 · Points à consolider · Ajustement programme'},
+  {id:'w2-arb-mer',jour:'MER',type:'VIDÉO JUG.',tc:'t-jug',titre:'Situations 50/50',corps:'F-DEF vs NOC · AOS vs NAOS · Guide rapide Principes_'},
+  {id:'w2-arb-jeu',jour:'JEU',type:'VIDÉO CREW',tc:'t-crew',titre:'Assist partner in-game',corps:'IOT_3PO_Avancé Ch.2.3 + Help_Defender.pdf'},
+  {id:'w2-arb-ven',jour:'VEN',type:'QCM RÈGLE.',tc:'t-regle',titre:'Art. 21 à 30',corps:'Étude 45\' + 20 questions · Objectif 85%+'},
+  {id:'w2-arb-sam',jour:'SAM',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Zones responsabilité',corps:'IOT_3PO_Avancé Ch.2.7 + 2.15'},
+  {id:'w2-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL',corps:''},{id:'w2-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},{id:'w2-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH',corps:''},{id:'w2-phy-jeu',jour:'JEU',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},{id:'w2-phy-ven',jour:'VEN',type:'MUSCU',tc:'t-muscu',titre:'JAMBES',corps:''},{id:'w2-phy-sam',jour:'SAM',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+ ]},
+ {num:3,dates:'23–29 juin',phase:'Bloc 1',seances:[
+  {id:'w3-arb-lun',jour:'LUN',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Lead changes avancés',corps:'IOT_3PO_Avancé Ch.2.8-2.14 · Post-up, écran'},
+  {id:'w3-arb-mar',jour:'MAR',type:'QCM RÈGLE.',tc:'t-regle',titre:'Art. 31 à 44',corps:'Fautes, sanctions, lancers-francs · Objectif 85%+'},
+  {id:'w3-arb-mer',jour:'MER',type:'VIDÉO JUG.',tc:'t-jug',titre:'AOS — 4 cas de figure',corps:'Principes_ + Interprétations 2025 · Dans le doute = AOS'},
+  {id:'w3-arb-jeu',jour:'JEU',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Positions spéciales LF/fin QT',corps:'IOT_3PO_Avancé Ch.2.16-2.20 · Protocoles'},
+  {id:'w3-arb-ven',jour:'VEN',type:'QCM RÈGLE.',tc:'t-regle',titre:'Test intermédiaire Art.1-44',corps:'20 questions mixtes · Objectif 85%+'},
+  {id:'w3-arb-sam',jour:'SAM',type:'VIDÉO CREW',tc:'t-crew',titre:'Gestion conflits',corps:'Pre_game.pdf exercice 2 · Scénarios "que faire si"'},
+  {id:'w3-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL',corps:''},{id:'w3-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},{id:'w3-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH',corps:''},{id:'w3-phy-jeu',jour:'JEU',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},{id:'w3-phy-ven',jour:'VEN',type:'MUSCU',tc:'t-muscu',titre:'JAMBES',corps:''},{id:'w3-phy-sam',jour:'SAM',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+ ]},
+ {num:4,dates:'30 juin–4 juil.',phase:'Bloc 1',coaching:'Coaching #2 ≈ 2 juillet — Bilan Bloc 1',seances:[
+  {id:'w4-arb-lun',jour:'LUN',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Synthèse 3PO Bloc 1',corps:'Auto-évaluation complète AT/AC/AK + rotations'},
+  {id:'w4-arb-mar',jour:'MAR',type:'QCM RÈGLE.',tc:'t-regle',titre:'Interprétations 2024/2025',corps:'Modifications surlignées jaune · 15 questions'},
+  {id:'w4-coaching',jour:'MER',type:'COACHING',tc:'t-coaching',titre:'Séance coaching #2 — 1h',corps:'Bilan Bloc 1 · Objectifs Corse · Template briefing'},
+  {id:'w4-arb-jeu',jour:'JEU',type:'VIDÉO JUG.',tc:'t-jug',titre:'Bilan 5 progrès S1→S4',corps:'Comparer notes S1 vs S4'},
+  {id:'w4-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL',corps:''},{id:'w4-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},{id:'w4-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH',corps:''},{id:'w4-phy-jeu',jour:'JEU',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},
+ ]},
+ {num:5,dates:'5–13 juil. 🏝',phase:'Corse',seances:[
+  {id:'w5-arb-lun',jour:'LUN',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Rotations avancées',corps:'IOT_3PO_Avancé Ch.2.8-2.12 · Pick & roll, post-up'},
+  {id:'w5-arb-mar',jour:'MAR',type:'QCM RÈGLE.',tc:'t-regle',titre:'Révision Art.21-44',corps:'20 questions · Objectif 85%+'},
+  {id:'w5-arb-mer',jour:'MER',type:'VIDÉO JUG.',tc:'t-jug',titre:'Verticalité et landing space',corps:'Help_Defender.pdf · 15 situations'},
+  {id:'w5-arb-jeu',jour:'JEU',type:'VIDÉO CREW',tc:'t-crew',titre:'Critères unifiés du crew',corps:'IOT_3PO_Avancé Ch.2.18 + Debriefing.pdf'},
+  {id:'w5-arb-ven',jour:'VEN',type:'QCM RÈGLE.',tc:'t-regle',titre:'Interprétations — cas spéciaux',corps:'20 questions · Objectif 85%+'},
+  {id:'w5-arb-sam',jour:'SAM',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Simulation match complet',corps:'Match entier : pauses + annotations'},
+  {id:'w5-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL poids corps',corps:''},{id:'w5-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},{id:'w5-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH poids corps',corps:''},{id:'w5-phy-jeu',jour:'JEU',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},{id:'w5-phy-ven',jour:'VEN',type:'MUSCU',tc:'t-muscu',titre:'JAMBES poids corps',corps:''},{id:'w5-phy-sam',jour:'SAM',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+ ]},
+ {num:6,dates:'14–20 juil. 🏝',phase:'Corse',coaching:'Coaching #3 ≈ 14 juillet — Distanciel',seances:[
+  {id:'w6-coaching',jour:'LUN',type:'COACHING',tc:'t-coaching',titre:'Séance coaching #3 — distanciel',corps:'Bilan S5 · Objectifs S7 · Analyse vidéo'},
+  {id:'w6-arb-mar',jour:'MAR',type:'QCM RÈGLE.',tc:'t-regle',titre:'Test 25 questions mixtes',corps:'Objectif 85%+ · Cible 20/25 confirmée pour 10 août'},
+  {id:'w6-arb-mer',jour:'MER',type:'VIDÉO JUG.',tc:'t-jug',titre:'Fin de match — décision froide',corps:'E_tat_d_esprit.pdf · Tunnel de contrôle'},
+  {id:'w6-arb-jeu',jour:'JEU',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'AOS — protocole complet',corps:'IOT_3PO_Avancé + Protocole AOS · 4 cas'},
+  {id:'w6-arb-ven',jour:'VEN',type:'QCM RÈGLE.',tc:'t-regle',titre:'Annexes IRS + Réclamation',corps:'Annexe F IRS + Mémo DAHN · 15 questions'},
+  {id:'w6-arb-sam',jour:'SAM',type:'VIDÉO CREW',tc:'t-crew',titre:'Debriefing après-match',corps:'Debriefing.pdf · 3 positives + 3 négatives'},
+  {id:'w6-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL poids corps',corps:''},{id:'w6-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},{id:'w6-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH poids corps',corps:''},{id:'w6-phy-jeu',jour:'JEU',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},{id:'w6-phy-ven',jour:'VEN',type:'MUSCU',tc:'t-muscu',titre:'JAMBES poids corps',corps:''},{id:'w6-phy-sam',jour:'SAM',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+ ]},
+ {num:7,dates:'21–27 juil. 🏝',phase:'Corse',seances:[
+  {id:'w7-arb-lun',jour:'LUN',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Zones partagées',corps:'IOT_3PO_Avancé Ch.2.7 · Rectangle 2 + restrictive'},
+  {id:'w7-arb-mar',jour:'MAR',type:'VIDÉO JUG.',tc:'t-jug',titre:'Fake — 6 critères',corps:'Principes_ section FAKE · Peut coexister avec faute'},
+  {id:'w7-arb-mer',jour:'MER',type:'QCM RÈGLE.',tc:'t-regle',titre:'Révision points fragiles',corps:'QCM personnalisé sur lacunes identifiées'},
+  {id:'w7-arb-jeu',jour:'JEU',type:'VIDÉO CREW',tc:'t-crew',titre:'Simulation pre-game',corps:'Briefing complet · Utiliser le template S1'},
+  {id:'w7-arb-ven',jour:'VEN',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Temps-morts',corps:'IOT_3PO_Avancé Ch.2.16 · Positions + activation 20s'},
+  {id:'w7-arb-sam',jour:'SAM',type:'QCM RÈGLE.',tc:'t-regle',titre:'Test blanc 20 questions',corps:'Sans notes, 20 min · Objectif 16/20 à ce stade'},
+  {id:'w7-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL poids corps',corps:''},{id:'w7-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},{id:'w7-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH poids corps',corps:''},{id:'w7-phy-jeu',jour:'JEU',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},{id:'w7-phy-ven',jour:'VEN',type:'MUSCU',tc:'t-muscu',titre:'JAMBES poids corps',corps:''},{id:'w7-phy-sam',jour:'SAM',type:'CARDIO',tc:'t-cardio',titre:'Cardio Corse',corps:''},
+ ]},
+ {num:8,dates:'28–30 juil. 🏝',phase:'Corse',coaching:'Coaching #4 ≈ 28 juillet — Distanciel',seances:[
+  {id:'w8-coaching',jour:'LUN',type:'COACHING',tc:'t-coaching',titre:'Séance coaching #4 — distanciel',corps:'Bilan juillet · Test blanc objectif · Scouting Elite 2'},
+  {id:'w8-arb-mar',jour:'MAR',type:'VIDÉO JUG.',tc:'t-jug',titre:'Bilan Corse — 5 progrès',corps:'S5→S7 · Lister améliorations + lacunes août'},
+  {id:'w8-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL poids corps',corps:''},{id:'w8-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio léger',corps:'Récupération avant retour'},
+ ]},
+ {num:9,dates:'31 juil.–3 août',phase:'Bloc 2',seances:[
+  {id:'w9-arb-jeu',jour:'JEU',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Pick & Roll complet',corps:'IOT_3PO_Avancé Ch.2.8-2.10 · Situation #1 Elite 2'},
+  {id:'w9-arb-ven',jour:'VEN',type:'QCM RÈGLE.',tc:'t-regle',titre:'Interprétations juil.2024',corps:'Surlignages jaunes · 20 questions · Objectif 85%+'},
+  {id:'w9-arb-sam',jour:'SAM',type:'VIDÉO JUG.',tc:'t-jug',titre:'Charge vs blocage',corps:'Help_Defender.pdf + Interprétations 2025'},
+  {id:'w9-phy-jeu',jour:'JEU',type:'MUSCU',tc:'t-muscu',titre:'PULL retour salle',corps:''},{id:'w9-phy-ven',jour:'VEN',type:'CARDIO',tc:'t-cardio',titre:'Cardio reprise',corps:''},{id:'w9-phy-sam',jour:'SAM',type:'MUSCU',tc:'t-muscu',titre:'PUSH retour salle',corps:''},
+ ]},
+ {num:10,dates:'4–10 août',phase:'Bloc 2',coaching:'Coaching #5 ≈ 4 août — Stratégie stage',seances:[
+  {id:'w10-coaching',jour:'LUN',type:'COACHING',tc:'t-coaching',titre:'Séance coaching #5 — 1h',corps:'Bilan été · Stratégie stage · Objectifs personnels'},
+  {id:'w10-arb-mar',jour:'MAR',type:'VIDÉO CREW',tc:'t-crew',titre:'Simulation crew complet',corps:'Briefing + match entier critères alignés'},
+  {id:'w10-arb-mer',jour:'MER',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'AOS + IRS protocoles',corps:'FIBA_IRS_Manual + Protocole AOS'},
+  {id:'w10-arb-jeu',jour:'JEU',type:'VIDÉO JUG.',tc:'t-jug',titre:'Simulation match actif',corps:'5 bonnes décisions + 5 à améliorer'},
+  {id:'w10-arb-ven',jour:'VEN',type:'TEST BLANC',tc:'t-regle',titre:'TEST BLANC — 25 questions',corps:'OBJECTIF : 20/25 · Sans notes, chrono 30\''},
+  {id:'w10-arb-sam',jour:'SAM',type:'SCOUTING',tc:'t-scout',titre:'Scouting Elite 2 — 3 équipes',corps:'Fiche : style, joueurs clés, situations risque'},
+  {id:'w10-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL',corps:''},{id:'w10-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},{id:'w10-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH',corps:''},{id:'w10-phy-jeu',jour:'JEU',type:'CARDIO',tc:'t-cardio',titre:'Cardio',corps:''},{id:'w10-phy-ven',jour:'VEN',type:'MUSCU',tc:'t-muscu',titre:'JAMBES',corps:''},{id:'w10-phy-sam',jour:'SAM',type:'CARDIO',tc:'t-cardio',titre:'Cardio + spécifique',corps:''},
+ ]},
+ {num:11,dates:'11–17 août',phase:'Bloc 2',seances:[
+  {id:'w11-arb-lun',jour:'LUN',type:'PRE-GAME',tc:'t-pregame',titre:'Pre-game #1 — Connaissance crew',corps:'Pré_game.pdf · Template briefing FIBA complet (1h30)'},
+  {id:'w11-arb-mar',jour:'MAR',type:'SCOUTING',tc:'t-scout',titre:'Scouting — 3 équipes',corps:'Joueurs à surveiller · Style coach'},
+  {id:'w11-arb-mer',jour:'MER',type:'VIDÉO MÉCA.',tc:'t-meca',titre:'Simulation match 3PO',corps:'Match Elite/Pro B · Placements en temps réel'},
+  {id:'w11-arb-jeu',jour:'JEU',type:'VIDÉO JUG.',tc:'t-jug',titre:'Tension fin de match',corps:'E_tat_d_esprit.pdf + Contro_ler_contro_lable_.pdf'},
+  {id:'w11-arb-ven',jour:'VEN',type:'PRE-GAME',tc:'t-pregame',titre:'Pre-game #2 — Scénarios',corps:'Pré_game.pdf exercice 1 · 5 situations inattendues Elite 2 (1h30)'},
+  {id:'w11-arb-sam',jour:'SAM',type:'SCOUTING',tc:'t-scout',titre:'Scouting synthèse globale',corps:'Fiche finale 1 page par équipe'},
+  {id:'w11-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL tapering',corps:''},{id:'w11-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio modéré',corps:''},{id:'w11-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH tapering',corps:''},{id:'w11-phy-jeu',jour:'JEU',type:'CARDIO',tc:'t-cardio',titre:'Cardio léger',corps:''},{id:'w11-phy-ven',jour:'VEN',type:'MUSCU',tc:'t-muscu',titre:'JAMBES tapering',corps:''},{id:'w11-phy-sam',jour:'SAM',type:'CARDIO',tc:'t-cardio',titre:'Cardio spécifique',corps:''},
+ ]},
+ {num:12,dates:'18–25 août 🏆',phase:'Bloc 3',seances:[
+  {id:'w12-arb-lun',jour:'LUN',type:'PRE-GAME',tc:'t-pregame',titre:'Pre-game #3 — Prestation',corps:'Pré_game.pdf · Objectifs prestation stage · Imagerie (1h30)'},
+  {id:'w12-arb-mar',jour:'MAR',type:'QCM FINAL',tc:'t-regle',titre:'QCM Final — 25 questions',corps:'OBJECTIF : 22/25 · Tous articles + interprétations'},
+  {id:'w12-arb-mer',jour:'MER',type:'VIDÉO JUG.',tc:'t-jug',titre:'Bilan été — 5 progrès',corps:'S1 vs S12 · 3 objectifs pour le stage'},
+  {id:'w12-stage-ven',jour:'VEN 22',type:'STAGE FFBB',tc:'t-stage',titre:'Stage FFBB — Jour 1',corps:'Paris · Test QCM officiel ≥ 20/25'},
+  {id:'w12-stage-sam',jour:'SAM 23',type:'STAGE FFBB',tc:'t-stage',titre:'Stage FFBB — Jour 2',corps:''},
+  {id:'w12-stage-dim',jour:'DIM 24',type:'STAGE FFBB',tc:'t-stage',titre:'Stage FFBB — Jour 3',corps:''},
+  {id:'w12-phy-lun',jour:'LUN',type:'MUSCU',tc:'t-muscu',titre:'PULL tapering',corps:''},{id:'w12-phy-mar',jour:'MAR',type:'CARDIO',tc:'t-cardio',titre:'Cardio léger',corps:''},{id:'w12-phy-mer',jour:'MER',type:'MUSCU',tc:'t-muscu',titre:'PUSH tapering',corps:''},
+ ]},
+];
+
+function getEteSeances(){return ETE_WEEKS.flatMap(w=>w.seances)}
+
+// ── ÉTÉ RENDER ────────────────────────────────────────────────
+let curEteWeek = 1;
+function renderEte(){
+  // Nav semaines
+  const nav = document.getElementById('ete-week-nav');
+  nav.innerHTML = ETE_WEEKS.map(w=>{
+    const total=w.seances.length;
+    const done=w.seances.filter(s=>getS('done_'+s.id,false)).length;
+    const pct=total?Math.round(done/total*100):0;
+    const isActive=w.num===curEteWeek;
+    return `<button onclick="selectEteWeek(${w.num})" style="
+      font-family:'DM Mono',monospace;font-size:.6rem;padding:5px 10px;
+      border-radius:6px;border:1px solid ${isActive?'var(--gold)':'var(--border)'};
+      background:${isActive?'var(--gold)':'var(--bg2)'};
+      color:${isActive?'var(--bg)':'var(--grey)'};cursor:pointer;letter-spacing:.5px;
+      position:relative">S${w.num}<br><span style="font-size:.5rem">${pct}%</span></button>`;
+  }).join('');
+  renderEteWeek(curEteWeek);
+}
+
+function selectEteWeek(n){curEteWeek=n;renderEte()}
+
+function renderEteWeek(n){
+  const w = ETE_WEEKS.find(x=>x.num===n);
+  const el = document.getElementById('ete-content');
+  const total=w.seances.length;
+  const done=w.seances.filter(s=>getS('done_'+s.id,false)).length;
+  const pct=total?Math.round(done/total*100):0;
+
+  let html=`
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem">Semaine ${n} — ${w.dates}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--gold)">${w.phase}</div>
+      </div>
+      ${w.coaching?`<div style="font-family:'DM Mono',monospace;font-size:.65rem;padding:5px 8px;background:var(--bg3);border:1px solid var(--gold);border-radius:5px;color:var(--gold);margin-top:6px">🎯 ${w.coaching}</div>`:''}
+      <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:var(--done-text);border-radius:3px;transition:width .4s"></div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--done-text)">${done}/${total} · ${pct}%</div>
+      </div>
+    </div>`;
+
+  // Arbitrage
+  const arb=w.seances.filter(s=>!['t-muscu','t-cardio','t-repos'].includes(s.tc));
+  html+=`<div class="sec-label">Arbitrage · 1h30/séance</div>`;
+  arb.forEach(s=>{
+    const isDone=getS('done_'+s.id,false);
+    const note=getS('note_'+s.id,'');
+    html+=`<div class="match-card${isDone?' has-note':''}" id="ete-${s.id}">
+      <div class="match-top">
+        <span class="match-date">${s.jour}</span>
+        <span class="match-comp ${s.tc}" style="font-size:.58rem">${s.type}</span>
+      </div>
+      <div class="match-teams" style="font-size:.88rem">${s.titre}</div>
+      ${s.corps?`<div class="match-crew">${s.corps}</div>`:''}
+      ${note?`<div style="margin-top:6px;font-size:.72rem;color:var(--gold2);font-style:italic;background:var(--bg3);padding:5px 8px;border-radius:5px">${note}</div>`:''}
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-secondary" style="font-size:.6rem;padding:5px 10px" onclick="toggleEteDone('${s.id}',event)">
+          ${isDone?'✓ Fait':'Marquer fait'}
+        </button>
+        <button class="btn btn-secondary" style="font-size:.6rem;padding:5px 10px" onclick="openEteNote('${s.id}',event)">
+          📝 Note
+        </button>
+      </div>
+    </div>`;
+  });
+
+  // Physique
+  const phy=w.seances.filter(s=>['t-muscu','t-cardio'].includes(s.tc));
+  if(phy.length){
+    html+=`<div class="sec-label">Physique</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+    phy.forEach(s=>{
+      const isDone=getS('done_'+s.id,false);
+      html+=`<div style="background:var(--bg2);border:1px solid ${isDone?'var(--done-border)':'var(--border)'};
+        border-radius:8px;padding:10px;cursor:pointer;transition:all .15s"
+        onclick="toggleEteDone('${s.id}',event)">
+        <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:${s.tc==='t-muscu'?'var(--muscu)':'var(--cardio)'};margin-bottom:2px">${s.type}</div>
+        <div style="font-size:.78rem;color:${isDone?'var(--done-text)':'var(--white)'};font-weight:500">${isDone?'✓ ':''} ${s.titre}</div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+function toggleEteDone(id,e){
+  e.stopPropagation();
+  setS('done_'+id,!getS('done_'+id,false));
+  renderEte();
+}
+
+function openEteNote(id,e){
+  e.stopPropagation();
+  const cur=getS('note_'+id,'');
+  const note=prompt('Note pour cette séance :',cur);
+  if(note!==null){setS('note_'+id,note);renderEte()}
+}
+
+// ══════════════════════════════════════════════════════════════
+// MATCHS
+// ══════════════════════════════════════════════════════════════
+let editingMatchId = null;
+
+function openMatchModal(id){
+  editingMatchId = id;
+  document.getElementById('matchModalTitle').textContent = id ? 'Modifier le match' : 'Nouveau match';
+  document.getElementById('deleteMatchBtn').style.display = id ? 'inline-flex' : 'none';
+  document.getElementById('pistesAuto').style.display = 'none';
+
+  if(id){
+    const m = getS('matchs',[]).find(x=>x.id===id);
+    if(m){
+      document.getElementById('mDate').value = m.date||'';
+      document.getElementById('mComp').value = m.comp||'Elite 2';
+      document.getElementById('mTeams').value = m.teams||'';
+      document.getElementById('mPos').value = m.pos||'CC';
+      document.getElementById('mNote').value = m.note||'';
+      document.getElementById('mCrew').value = m.crew||'';
+      document.getElementById('mForts').value = m.forts||'';
+      document.getElementById('mAmelio').value = m.amelio||'';
+      document.getElementById('mNotes').value = m.notes||'';
+      if(m.pistes){
+        showPistes(m.pistes);
+      }
+    }
+  } else {
+    document.getElementById('mDate').value = '';
+    document.getElementById('mComp').value = 'Elite 2';
+    document.getElementById('mTeams').value = '';
+    document.getElementById('mPos').value = 'CC';
+    document.getElementById('mNote').value = '';
+    document.getElementById('mCrew').value = '';
+    document.getElementById('mForts').value = '';
+    document.getElementById('mAmelio').value = '';
+    document.getElementById('mNotes').value = '';
+  }
+  openModal('matchModal');
+}
+
+function saveMatch(){
+  const matchs = getS('matchs',[]);
+  const id = editingMatchId || 'match_'+Date.now();
+  const pistes = document.getElementById('pistesContent').innerHTML ?
+    document.getElementById('pistesContent').innerText : '';
+
+  const match = {
+    id, date:document.getElementById('mDate').value,
+    comp:document.getElementById('mComp').value,
+    teams:document.getElementById('mTeams').value,
+    pos:document.getElementById('mPos').value,
+    note:document.getElementById('mNote').value,
+    crew:document.getElementById('mCrew').value,
+    forts:document.getElementById('mForts').value,
+    amelio:document.getElementById('mAmelio').value,
+    notes:document.getElementById('mNotes').value,
+    pistes
+  };
+
+  if(editingMatchId){
+    const idx = matchs.findIndex(x=>x.id===editingMatchId);
+    if(idx>=0) matchs[idx]=match; else matchs.push(match);
+  } else {
+    matchs.push(match);
+  }
+  matchs.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  setS('matchs',matchs);
+  closeModal('matchModal');
+  renderMatchs();
+  renderCal();
+  renderDash();
+  toast('Match sauvegardé ✓');
+}
+
+function deleteMatch(){
+  if(!editingMatchId) return;
+  if(!confirm('Supprimer ce match ?')) return;
+  const matchs = getS('matchs',[]).filter(m=>m.id!==editingMatchId);
+  setS('matchs',matchs);
+  closeModal('matchModal');
+  renderMatchs();
+  renderCal();
+  toast('Match supprimé');
+}
+
+// Pistes de travail automatiques
+const PISTES_DB = {
+  mecanique:['Travailler les rotations 3PO (IOT Avancé Ch.2.8-2.14)','Revoir les positions AT/AC/AK en zones partagées','Pratiquer les lead changes en simulation vidéo','Réviser le protocole AOS et fins de période'],
+  jugement:['Séance vidéo patient call — 10 situations analysées','Revoir le guide 50/50 : F-DEF vs NOC','Analyser les situations de verticalité/landing space','Travailler la décision froide en fin de match'],
+  crew:['Réviser la structure du briefing pre-game FIBA','Travailler la communication assist partner','Simuler un match entier avec critères unifiés','Revoir les scénarios "que faire si"'],
+  regle:['QCM ciblé sur les articles concernés','Relire les interprétations 2024/2025 modifiées','Étudier les cas spéciaux du match avec le code de jeu'],
+  physique:['Renforcer le gainage pour la stabilité en déplacement','Travailler les exercices RSA spécifiques arbitre'],
+};
+
+function generatePistes(){
+  const amelio = document.getElementById('mAmelio').value.toLowerCase();
+  const notes_val = parseFloat(document.getElementById('mNote').value||'10');
+  let pistes = [];
+
+  if(amelio.includes('méca')||amelio.includes('position')||amelio.includes('rotat')||amelio.includes('zone'))
+    pistes.push(...PISTES_DB.mecanique.slice(0,2));
+  if(amelio.includes('siffl')||amelio.includes('jugement')||amelio.includes('décision')||amelio.includes('50/50'))
+    pistes.push(...PISTES_DB.jugement.slice(0,2));
+  if(amelio.includes('crew')||amelio.includes('collègue')||amelio.includes('briefing')||amelio.includes('crit'))
+    pistes.push(...PISTES_DB.crew.slice(0,2));
+  if(amelio.includes('règle')||amelio.includes('article')||amelio.includes('interprét'))
+    pistes.push(...PISTES_DB.regle.slice(0,2));
+  if(pistes.length===0){
+    // Par défaut selon la note
+    if(notes_val<7) pistes=[...PISTES_DB.mecanique.slice(0,1),...PISTES_DB.jugement.slice(0,1),...PISTES_DB.crew.slice(0,1)];
+    else pistes=[...PISTES_DB.mecanique.slice(0,1),...PISTES_DB.jugement.slice(0,1)];
+  }
+  showPistes(pistes.slice(0,4).join('\n'));
+}
+
+function showPistes(txt){
+  const items = txt.split('\n').filter(Boolean);
+  document.getElementById('pistesContent').innerHTML = items.map(p=>`<div class="piste-item">${p}</div>`).join('');
+  document.getElementById('pistesAuto').style.display = 'block';
+}
+
+function renderMatchs(){
+  const matchs = getS('matchs',[]);
+  const el = document.getElementById('matchs-list');
+  if(!matchs.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">🏀</div><div class="empty-text">Aucun match enregistré.<br>Clique + pour ajouter ton premier match.</div></div>`;
+    return;
+  }
+  el.innerHTML = matchs.map(m=>{
+    const d = m.date ? new Date(m.date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : '—';
+    const noteColor = !m.note?'var(--grey)':parseFloat(m.note)>=8?'var(--done-text)':parseFloat(m.note)>=6.5?'var(--gold)':'var(--danger)';
+    const posClass = m.pos==='CC'?'pos-cc':m.pos==='U1'?'pos-u1':'pos-u2';
+    return `<div class="match-card${m.forts||m.amelio?' has-note':''}" onclick="openMatchModal('${m.id}')">
+      <div class="match-top">
+        <span class="match-date">${d}</span>
+        <span class="match-comp">${m.comp||'Elite 2'}</span>
+        <span class="match-pos ${posClass}">${m.pos||'—'}</span>
+      </div>
+      <div class="match-teams">${m.teams||'Match sans équipes'}</div>
+      <div class="match-crew">${m.crew||''}</div>
+      ${m.note?`<div class="match-note-badge" style="background:var(--bg3);color:${noteColor};border:1px solid ${noteColor}">${m.note}/10</div>`:''}
+      <div class="match-tags">
+        ${m.forts?m.forts.split('\n').filter(Boolean).slice(0,2).map(t=>`<span class="match-tag tag-fort">✓ ${t.substring(0,30)}</span>`).join(''):''}
+        ${m.amelio?m.amelio.split('\n').filter(Boolean).slice(0,2).map(t=>`<span class="match-tag tag-amelio">↑ ${t.substring(0,30)}</span>`).join(''):''}
+        ${m.pistes?'<span class="match-tag tag-piste">💡 Pistes générées</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// CALENDRIER
+// ══════════════════════════════════════════════════════════════
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function renderCal(){
+  const matchs = getS('matchs',[]);
+  const matchDates = new Set(matchs.map(m=>m.date));
+  const months=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  document.getElementById('calTitle').textContent = `${months[calMonth]} ${calYear}`;
+  const grid = document.getElementById('calGrid');
+  const dows=['L','M','M','J','V','S','D'];
+  grid.innerHTML = dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  const first = new Date(calYear,calMonth,1).getDay();
+  const offset = first===0?6:first-1;
+  const days = new Date(calYear,calMonth+1,0).getDate();
+  const today = new Date().toISOString().slice(0,10);
+  for(let i=0;i<offset;i++) grid.innerHTML+=`<div class="cal-day empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=dateStr===today;
+    const hasMatch=matchDates.has(dateStr);
+    const m=matchs.find(x=>x.date===dateStr);
+    grid.innerHTML+=`<div class="cal-day${isToday?' today':''}${hasMatch?' has-match':''}"
+      ${hasMatch?`onclick="openMatchModal('${m.id}')" title="${m.teams||'Match'}"`:''}>
+      ${d}
+    </div>`;
+  }
+}
+
+function calNav(dir){calMonth+=dir;if(calMonth<0){calMonth=11;calYear--}if(calMonth>11){calMonth=0;calYear++}renderCal()}
+
+// ══════════════════════════════════════════════════════════════
+// OBJECTIFS
+// ══════════════════════════════════════════════════════════════
+function openObjModal(id){
+  document.getElementById('objId').value = id||'';
+  if(id){
+    const o=getS('objectifs',[]).find(x=>x.id===id);
+    if(o){
+      document.getElementById('oTitle').value=o.title||'';
+      document.getElementById('oAxe').value=o.axe||'Mécanique 3PO';
+      document.getElementById('oDate').value=o.date||'';
+      document.getElementById('oMesure').value=o.mesure||'';
+      document.getElementById('oCoaching').value=o.coaching||'';
+    }
+  } else {
+    document.getElementById('oTitle').value='';
+    document.getElementById('oAxe').value='Mécanique 3PO';
+    document.getElementById('oDate').value='';
+    document.getElementById('oMesure').value='';
+    document.getElementById('oCoaching').value='';
+  }
+  openModal('objModal');
+}
+
+function saveObj(){
+  const objs=getS('objectifs',[]);
+  const id=document.getElementById('objId').value||'obj_'+Date.now();
+  const obj={
+    id,done:false,
+    title:document.getElementById('oTitle').value,
+    axe:document.getElementById('oAxe').value,
+    date:document.getElementById('oDate').value,
+    mesure:document.getElementById('oMesure').value,
+    coaching:document.getElementById('oCoaching').value,
+  };
+  const idx=objs.findIndex(x=>x.id===id);
+  if(idx>=0){obj.done=objs[idx].done;objs[idx]=obj}else objs.push(obj);
+  setS('objectifs',objs);
+  closeModal('objModal');
+  renderObj();
+  renderDash();
+  toast('Objectif sauvegardé ✓');
+}
+
+function toggleObj(id){
+  const objs=getS('objectifs',[]);
+  const o=objs.find(x=>x.id===id);
+  if(o){o.done=!o.done;setS('objectifs',objs);renderObj();renderDash()}
+}
+
+function deleteObj(id){
+  if(!confirm('Supprimer cet objectif ?')) return;
+  setS('objectifs',getS('objectifs',[]).filter(x=>x.id!==id));
+  renderObj();renderDash();toast('Objectif supprimé');
+}
+
+const AXE_COLORS={'Mécanique 3PO':'var(--meca)','Jugement':'var(--jug)','Gestion Crew':'var(--crew)',
+  'Règlement':'var(--regle)','Pre-game':'var(--pregame)','Physique':'var(--muscu)',
+  'Mental':'var(--cardio)','Autre':'var(--grey)'};
+
+function renderObj(){
+  const objs=getS('objectifs',[]);
+  const encours=objs.filter(o=>!o.done);
+  const atteints=objs.filter(o=>o.done);
+  const renderList=(list,el)=>{
+    if(!list.length){document.getElementById(el).innerHTML=`<div class="empty-state" style="padding:16px 0"><div class="empty-text" style="font-size:.78rem">Aucun objectif ici</div></div>`;return}
+    document.getElementById(el).innerHTML=list.map(o=>{
+      const col=AXE_COLORS[o.axe]||'var(--grey)';
+      const dl=o.date?new Date(o.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'';
+      return `<div class="obj-card">
+        <div class="obj-check${o.done?' done':''}" onclick="toggleObj('${o.id}')"></div>
+        <div class="obj-body" onclick="openObjModal('${o.id}')" style="cursor:pointer">
+          <div class="obj-title">${o.title}</div>
+          <div class="obj-meta" style="color:${col}">${o.axe}</div>
+          ${o.mesure?`<div class="obj-meta" style="margin-top:2px">${o.mesure}</div>`:''}
+          <div class="obj-meta">${dl?`Avant le ${dl}  ·  `:''} ${o.coaching||''}</div>
+        </div>
+        <button class="obj-delete" onclick="deleteObj('${o.id}')">✕</button>
+      </div>`;
+    }).join('');
+  };
+  renderList(encours,'obj-encours');
+  renderList(atteints,'obj-atteints');
+}
+
+// ══════════════════════════════════════════════════════════════
+// PROGRESSION
+// ══════════════════════════════════════════════════════════════
+function renderProg(){
+  const matchs=getS('matchs',[]).filter(m=>m.date&&m.note).sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+  // Chart notes
+  const chartEl=document.getElementById('chart-notes');
+  if(!matchs.length){
+    chartEl.innerHTML=`<div style="width:100%;text-align:center;color:var(--grey);font-size:.75rem;padding:20px 0">Aucun match avec note pour l'instant</div>`;
+  } else {
+    const maxH=70;
+    const notes=matchs.map(m=>parseFloat(m.note));
+    const max=10;
+    const avg=(notes.reduce((a,b)=>a+b,0)/notes.length).toFixed(2);
+    chartEl.innerHTML=matchs.slice(-10).map(m=>{
+      const n=parseFloat(m.note);
+      const h=Math.round(n/max*maxH);
+      const col=n>=8?'var(--done-text)':n>=6.5?'var(--gold)':'var(--danger)';
+      const d=new Date(m.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+      return `<div class="chart-bar-wrap">
+        <div class="chart-bar-val" style="color:${col};font-size:.6rem">${n}</div>
+        <div class="chart-bar" style="height:${h}px;background:${col};width:100%"></div>
+        <div class="chart-bar-lbl">${d}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('chart-avg').textContent=`Moyenne : ${avg}/10 sur ${matchs.length} match${matchs.length>1?'s':''}`;
+  }
+
+  // Axes chart — fréquence des pistes
+  const axesEl=document.getElementById('axes-chart');
+  const allPistes=getS('matchs',[]).map(m=>m.pistes||'').join('\n').toLowerCase();
+  const axes=[
+    {label:'Mécanique 3PO',key:'méca|position|rotat|zone|lead',color:'var(--meca)'},
+    {label:'Jugement',key:'siffl|jugement|décision|patient|50',color:'var(--jug)'},
+    {label:'Crew',key:'crew|briefing|collègue|crit',color:'var(--crew)'},
+    {label:'Règlement',key:'règle|article|interprét|qcm',color:'var(--regle)'},
+  ];
+  const counts=axes.map(a=>{
+    const re=new RegExp(a.key,'g');
+    const matches=allPistes.match(re);
+    return {...a,count:matches?matches.length:0};
+  });
+  const maxC=Math.max(1,...counts.map(c=>c.count));
+  axesEl.innerHTML=counts.map(c=>`
+    <div class="prog-row">
+      <div class="prog-lbl" style="font-size:.72rem;color:${c.color}">${c.label}</div>
+      <div class="prog-bar" style="height:8px"><div class="prog-fill" style="width:${Math.round(c.count/maxC*100)}%;background:${c.color}"></div></div>
+      <div class="prog-pct" style="color:${c.color}">${c.count}</div>
+    </div>`).join('');
+
+  // Derniers matchs
+  const recEl=document.getElementById('prog-recent-matchs');
+  const recent=getS('matchs',[]).slice(0,5);
+  if(!recent.length){
+    recEl.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Tes bilans de match apparaîtront ici.</div></div>`;
+  } else {
+    recEl.innerHTML=recent.map(m=>{
+      const d=m.date?new Date(m.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'—';
+      const noteColor=!m.note?'var(--grey)':parseFloat(m.note)>=8?'var(--done-text)':parseFloat(m.note)>=6.5?'var(--gold)':'var(--danger)';
+      return `<div class="card" style="cursor:pointer;margin-bottom:10px" onclick="goScreen('saison',document.querySelectorAll('.nav-btn')[2])">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div>
+            <span style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--gold)">${d}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--grey);margin-left:8px">${m.comp||''}</span>
+          </div>
+          ${m.note?`<span style="font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;color:${noteColor}">${m.note}/10</span>`:''}
+        </div>
+        <div style="font-weight:600;font-size:.85rem;margin-bottom:6px">${m.teams||'Match'}</div>
+        ${m.forts?`<div style="font-size:.72rem;color:var(--done-text);margin-bottom:3px">✅ ${m.forts.split('\n')[0]}</div>`:''}
+        ${m.amelio?`<div style="font-size:.72rem;color:var(--cardio)">⚠ ${m.amelio.split('\n')[0]}</div>`:''}
+        ${m.pistes?`<div style="font-size:.68rem;color:var(--jug);margin-top:4px;font-style:italic">💡 Pistes de travail générées</div>`:''}
+      </div>`;
+    }).join('');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// SYNC EXPORT/IMPORT
+// ══════════════════════════════════════════════════════════════
+function openSync(mode){
+  document.getElementById('syncTitle').textContent=mode==='export'?'⬇ Exporter mes données':'⬆ Importer des données';
+  if(mode==='export'){
+    const json=JSON.stringify({app:'ArbitreE2',v:2,at:new Date().toISOString(),data:S},null,2);
+    document.getElementById('syncBody').innerHTML=`
+      <p style="font-size:.8rem;color:var(--grey);margin-bottom:10px;line-height:1.55">
+        <b style="color:var(--white)">Mac → iPhone :</b> Copie le code ci-dessous, colle-le dans Notes iCloud, puis sur iPhone → Importer → colle.
+      </p>
+      <textarea readonly id="syncTA" style="width:100%;height:150px;background:var(--bg4);border:1px solid var(--border);border-radius:8px;color:var(--regle);font-family:'DM Mono',monospace;font-size:.58rem;padding:10px;resize:none;outline:none">${json}</textarea>
+      <button class="btn btn-primary btn-full" style="margin-top:10px" onclick="copySync()">📋 Copier le code</button>
+      <p style="font-size:.65rem;color:var(--grey2);margin-top:8px;font-family:'DM Mono',monospace">${Object.keys(S).length} entrées · ${new Date().toLocaleString('fr-FR')}</p>`;
+    setTimeout(()=>{const t=document.getElementById('syncTA');if(t)t.value=json},10);
+  } else {
+    document.getElementById('syncBody').innerHTML=`
+      <p style="font-size:.8rem;color:var(--grey);margin-bottom:10px;line-height:1.55">
+        <b style="color:var(--white)">iPhone → Mac :</b> Copie le code depuis l'iPhone, colle-le ici, puis clique Charger.
+      </p>
+      <textarea id="syncTA" placeholder="Colle ici le code copié..." style="width:100%;height:150px;background:var(--bg4);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:'DM Mono',monospace;font-size:.62rem;padding:10px;resize:none;outline:none"></textarea>
+      <button class="btn btn-primary btn-full" style="margin-top:10px" onclick="doImport()">⬆ Charger les données</button>
+      <p style="font-size:.65rem;color:var(--danger);margin-top:8px;font-family:'DM Mono',monospace">⚠ Tes données actuelles seront remplacées</p>`;
+  }
+  openModal('syncModal');
+}
+
+function copySync(){
+  const ta=document.getElementById('syncTA');
+  if(!ta) return;
+  ta.select();
+  navigator.clipboard.writeText(ta.value).then(()=>toast('✓ Code copié !')).catch(()=>{document.execCommand('copy');toast('✓ Copié !')});
+}
+
+function doImport(){
+  const ta=document.getElementById('syncTA');
+  if(!ta||!ta.value.trim()){toast('Colle d\'abord le code');return}
+  try{
+    const obj=JSON.parse(ta.value.trim());
+    if(!obj.data){toast('❌ Format invalide');return}
+    if(!confirm(`Importer ${Object.keys(obj.data).length} entrées ?\nTes données actuelles seront remplacées.`)) return;
+    S=obj.data;save(S);
+    closeModal('syncModal');
+    renderDash();
+    toast('✓ Import réussi !');
+  }catch{toast('❌ Code invalide')}
+}
+
+// ══════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function closeIfOutside(e,id){if(e.target.id===id)closeModal(id)}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+// ══════════════════════════════════════════════════════════════
+// SÉANCES SAISON
+// ══════════════════════════════════════════════════════════════
+const SEANCE_TYPES = {
+  meca:    {label:'Vidéo Mécanique 3PO', icon:'🎬', color:'var(--meca)',    bg:'#122030'},
+  jug:     {label:'Vidéo Jugement',      icon:'🎬', color:'var(--jug)',     bg:'#18122a'},
+  crew:    {label:'Vidéo Gestion Crew',  icon:'🎬', color:'var(--crew)',    bg:'#121e14'},
+  regle:   {label:'Règlement / QCM',     icon:'📚', color:'var(--regle)',   bg:'#0e1c1c'},
+  pregame: {label:'Pre-game',            icon:'📋', color:'var(--pregame)', bg:'#201a08'},
+  scout:   {label:'Scouting équipe',     icon:'🔍', color:'var(--scout)',   bg:'#1e1210'},
+  coaching:{label:'Coaching',            icon:'🎯', color:'var(--coaching)',bg:'#1a1005'},
+  muscu:   {label:'Musculation',         icon:'💪', color:'var(--muscu)',   bg:'#201210'},
+  cardio:  {label:'Cardio',              icon:'🏃', color:'var(--cardio)',  bg:'#201808'},
+  autre:   {label:'Autre',               icon:'📝', color:'var(--grey)',    bg:'var(--bg3)'},
+};
+
+let editingSeanceId = null;
+
+function openSeanceModal(id) {
+  editingSeanceId = id;
+  document.getElementById('seanceModalTitle').textContent = id ? 'Modifier la séance' : 'Nouvelle séance';
+  document.getElementById('deleteSeanceBtn').style.display = id ? 'inline-flex' : 'none';
+
+  if (id) {
+    const s = getS('seances_saison', []).find(x => x.id === id);
+    if (s) {
+      document.getElementById('sDate').value = s.date || '';
+      document.getElementById('sDuree').value = s.duree || '1h';
+      document.getElementById('sType').value = s.type || 'meca';
+      document.getElementById('sTheme').value = s.theme || '';
+      document.getElementById('sFait').value = s.fait || '';
+      document.getElementById('sRetrav').value = s.retrav || '';
+    }
+  } else {
+    const today = new Date().toISOString().slice(0,10);
+    document.getElementById('sDate').value = today;
+    document.getElementById('sDuree').value = '1h';
+    document.getElementById('sType').value = 'meca';
+    document.getElementById('sTheme').value = '';
+    document.getElementById('sFait').value = '';
+    document.getElementById('sRetrav').value = '';
+  }
+  openModal('seanceModal');
+}
+
+function saveSeance() {
+  const seances = getS('seances_saison', []);
+  const id = editingSeanceId || 'seance_' + Date.now();
+  const seance = {
+    id,
+    date:   document.getElementById('sDate').value,
+    duree:  document.getElementById('sDuree').value,
+    type:   document.getElementById('sType').value,
+    theme:  document.getElementById('sTheme').value,
+    fait:   document.getElementById('sFait').value,
+    retrav: document.getElementById('sRetrav').value,
+  };
+  if (editingSeanceId) {
+    const idx = seances.findIndex(x => x.id === editingSeanceId);
+    if (idx >= 0) seances[idx] = seance; else seances.push(seance);
+  } else {
+    seances.push(seance);
+  }
+  seances.sort((a,b) => new Date(b.date) - new Date(a.date));
+  setS('seances_saison', seances);
+  closeModal('seanceModal');
+  renderSeancesSaison();
+  renderDash();
+  toast('Séance sauvegardée ✓');
+}
+
+function deleteSeance() {
+  if (!editingSeanceId) return;
+  if (!confirm('Supprimer cette séance ?')) return;
+  setS('seances_saison', getS('seances_saison',[]).filter(x => x.id !== editingSeanceId));
+  closeModal('seanceModal');
+  renderSeancesSaison();
+  toast('Séance supprimée');
+}
+
+function renderSeancesSaison() {
+  const seances = getS('seances_saison', []);
+  const el = document.getElementById('seances-saison-list');
+  if (!el) return;
+  if (!seances.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div>
+      <div class="empty-text">Aucune séance enregistrée.<br>Clique + pour ajouter ta première séance de saison.</div></div>`;
+    return;
+  }
+
+  // Grouper par mois
+  const grouped = {};
+  seances.forEach(s => {
+    const key = s.date ? s.date.slice(0,7) : 'autre';
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(s);
+  });
+
+  el.innerHTML = Object.keys(grouped).sort((a,b)=>b.localeCompare(a)).map(month => {
+    const label = month === 'autre' ? 'Sans date' :
+      new Date(month+'-01').toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+    const items = grouped[month].map(s => {
+      const t = SEANCE_TYPES[s.type] || SEANCE_TYPES.autre;
+      const d = s.date ? new Date(s.date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}) : '—';
+      return `<div class="match-card${s.fait?' has-note':''}" onclick="openSeanceModal('${s.id}')" style="border-left:3px solid ${t.color}">
+        <div class="match-top">
+          <span class="match-date">${d}</span>
+          <span class="match-comp" style="color:${t.color};border-color:${t.color};background:${t.bg}">${t.icon} ${t.label}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--grey);margin-left:auto">${s.duree||''}</span>
+        </div>
+        ${s.theme ? `<div class="match-teams" style="font-size:.88rem">${s.theme}</div>` : ''}
+        ${s.fait ? `<div class="match-crew" style="margin-top:3px">✅ ${s.fait.split('\n')[0].substring(0,60)}${s.fait.length>60?'…':''}</div>` : ''}
+        ${s.retrav ? `<div class="match-crew" style="color:var(--cardio)">⚠ ${s.retrav.split('\n')[0].substring(0,60)}</div>` : ''}
+      </div>`;
+    }).join('');
+    return `<div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:1.5px;
+      text-transform:uppercase;color:var(--gold);margin:12px 0 6px">${label} — ${grouped[month].length} séance${grouped[month].length>1?'s':''}</div>
+      ${items}`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+renderDash();
+renderCal();
+</script>
+</body>
+</html>
